@@ -12,14 +12,32 @@
 </head>
 
 <body>
-    <div class="xray-container">
-        <!-- LEFT: Code Deck -->
-        <aside class="left-panel">
-            <div class="panel-header">
-                <h2>SOURCE_CODE</h2>
-                <span class="status-dot"></span>
+    <div class="app-container">
+        <!-- TOP: Header/Nav -->
+        <header class="cyber-header">
+            <div class="logo">
+                <span class="logo-icon">💠</span>
+                <h1>RECURSION <span class="highlight">X-RAY</span></h1>
             </div>
-            <textarea id="codeEditor" spellcheck="false">
+            <div class="header-controls">
+                <button id="btnTheme" class="icon-btn" title="Toggle Theme">🌙</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- LEFT: Code Deck -->
+            <aside class="left-panel glass-panel">
+                <div class="panel-header">
+                    <h2><span class="icon">📜</span> SOURCE_CODE</h2>
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">IDLE</span>
+                    </div>
+                </div>
+
+                <div class="code-editor-container">
+                    <div class="line-numbers" id="lineNumbers"></div>
+                    <textarea id="codeEditor" spellcheck="false" class="code-input">
 void permute(vector<int> nums, vector<int> curr, vector<bool> visited) {
     if (curr.size() == nums.size()) {
         cout << "Found solution!";
@@ -43,25 +61,76 @@ void permute(vector<int> nums, vector<int> curr, vector<bool> visited) {
 let nums = [1, 2, 3];
 let visited = [false, false, false];
 permute(nums, [], visited);
-            </textarea>
-            <button id="btnRun" class="cyber-btn">COMPILE & RUN</button>
-        </aside>
-
-        <!-- CENTER: Holodeck (3D) -->
-        <main id="visContainer" class="vis-container">
-            <div class="hud-overlay">
-                <div id="professorText" class="professor-panel">
-                    System Ready. Awaiting Code Injection...
+                    </textarea>
+                    <div id="codeHighlightOverlay" class="code-overlay"></div>
                 </div>
-            </div>
-        </main>
 
-        <!-- BOTTOM: Timeline -->
-        <div class="bottom-panel">
-            <button id="btnPrev">⏪</button>
-            <button id="btnPlay">▶</button>
-            <button id="btnNext">⏩</button>
-            <input type="range" id="slider" min="0" max="100" value="0" style="width: 100%">
+                <div class="control-panel">
+                    <div class="select-wrapper">
+                        <select id="algoSelect" class="cyber-select">
+                            <option value="permutations">Permutations (Backtracking)</option>
+                            <option value="factorial">Factorial (Simple)</option>
+                        </select>
+                    </div>
+                    <input type="text" id="algoInput" class="cyber-input" value="1,2,3"
+                        placeholder="Input (e.g. 1,2,3)">
+                    <button id="btnRun" class="cyber-btn primary-glow">
+                        <span class="btn-icon">⚡</span> COMPILE_AND_RUN
+                    </button>
+                </div>
+            </aside>
+
+            <!-- CENTER: Holodeck (3D) -->
+            <main class="vis-container relative">
+                <div id="vis3d" class="vis-3d-stage"></div>
+
+                <!-- Overlay Experience -->
+                <div class="hud-overlay">
+                    <div id="professorText" class="professor-panel glass-panel">
+                        <div class="typing-container">
+                            <span class="system-prefix">> SYSTEM:</span>
+                            <span id="stepDescription">Awaiting Neural Link...</span>
+                        </div>
+                    </div>
+                    <div id="stepTitle" class="step-title">INITIALIZED</div>
+                </div>
+
+                <!-- Floating Timeline -->
+                <div class="timeline-dock glass-panel">
+                    <div class="playback-controls">
+                        <button id="btnPrev" class="ctrl-btn">⏮</button>
+                        <button id="btnPlayPause" class="ctrl-btn play-btn">▶</button>
+                        <button id="btnNext" class="ctrl-btn">⏭</button>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="progressSlider" min="0" max="100" value="0" class="cyber-slider">
+                    </div>
+                    <div class="speed-control">
+                        <span>SPEED</span>
+                        <input type="range" id="speedSlider" min="100" max="2000" value="1000" class="mini-slider">
+                    </div>
+                </div>
+            </main>
+
+            <!-- RIGHT: Data Viz (Stack & Tree) -->
+            <aside class="right-panel glass-panel">
+                <div class="panel-section" style="height: 50%">
+                    <div class="panel-header">
+                        <h2><span class="icon">🥞</span> CALL_STACK</h2>
+                    </div>
+                    <div id="stackContainer" class="stack-list custom-scroll">
+                        <!-- Stack Frames Injected Here -->
+                    </div>
+                </div>
+                <div class="panel-section" style="height: 50%; border-top: 1px solid var(--border-color);">
+                    <div class="panel-header">
+                        <h2><span class="icon">🌳</span> RECURSION_TREE</h2>
+                    </div>
+                    <div id="treeContainer" class="tree-viz custom-scroll">
+                        <!-- D3/SVG Tree Here -->
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
