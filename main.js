@@ -136,6 +136,19 @@ function updateVisuals(index) {
     elStepDesc.textContent = `${msg}`;
     elStepTitle.textContent = event.type.toUpperCase();
 
+    // Final Result Panel Update
+    const elFinalResult = document.getElementById('finalResultPanel');
+    const elFinalValue = document.getElementById('finalResultValue');
+
+    // Only show final result if we are at the end OR if it's the last return
+    // AND it's a root return.
+    if (event.type === 'RETURN' && event.data.frame.depth === 0) {
+        elFinalResult.classList.remove('hidden');
+        elFinalValue.textContent = JSON.stringify(event.data.returnValue);
+    } else if (index === 0) {
+        elFinalResult.classList.add('hidden');
+    }
+
     // Code Highlight
     if (event.lineNumber) {
         highlightLine(event.lineNumber);
@@ -149,35 +162,55 @@ function render2DStack(index, timeline) {
 
     // Reconstruct stack state up to current index
     const activeStack = [];
+    let returningFrame = null; // Special frame to show as "returning"
+
+    // Logic: 
+    // Iterate 0 to index. 
+    // If we hit a RETURN at 'index' (current moment), we do NOT remove it yet visually,
+    // but instead mark it as returning.
+
     for (let i = 0; i <= index; i++) {
         const e = timeline[i];
         if (e.type === 'CALL') {
             activeStack.push(e);
         } else if (e.type === 'RETURN') {
-            // Remove the corresponding frame
-            // We search from end to find matching frameId
+            // Find frame
+            let foundIdx = -1;
             for (let j = activeStack.length - 1; j >= 0; j--) {
                 if (activeStack[j].frameId === e.frameId) {
-                    activeStack.splice(j, 1);
+                    foundIdx = j;
                     break;
+                }
+            }
+
+            if (foundIdx !== -1) {
+                if (i === index) {
+                    // THIS is the current event. The frame is "returning".
+                    // We remove it from activeStack to emulate stack pop logic,
+                    // BUT we save it to display it specially.
+                    // Actually, usually a return pops the stack.
+                    // If we want to see it "leaving", we can keep it in the list but style it.
+                    // Let's keep it in the list for this render, but add metadata.
+                    activeStack[foundIdx].isReturning = true;
+                    activeStack[foundIdx].returnValue = e.data.returnValue;
+                } else {
+                    // Past event. It's gone.
+                    activeStack.splice(foundIdx, 1);
                 }
             }
         }
     }
 
     // Render from top (newest) to bottom (oldest)
-    // activeStack has oldest at 0.
-    // We want newest at top -> reverse iteration or flex-direction: column-reverse
-    // CSS has flex-direction: column for panel, but stack-list uses column-reverse? 
-    // Let's check CSS. .stack-list { flex-direction: column-reverse; } 
-    // So we append oldest first, and CSS reverses it?
-    // Actually, standard stack view usually lists newest at top.
-
-    // Let's render standard DIVs and let CSS handle order.
     activeStack.forEach(e => {
         const frame = e.data.frame;
         const div = document.createElement('div');
         div.className = 'stack-frame active';
+
+        // Apply "returning" style if marked
+        if (e.isReturning) {
+            div.className += ' returning';
+        }
 
         let argsHtml = '';
         if (frame.args) {
@@ -187,14 +220,33 @@ function render2DStack(index, timeline) {
             });
         }
 
+        let returnHtml = '';
+        if (e.isReturning) {
+            returnHtml = `
+                <div class="return-value-badge">
+                    <span class="return-arrow">⤴</span>
+                    <span>Returns: ${e.returnValue !== undefined ? e.returnValue : '?'}</span>
+                </div>
+            `;
+        }
+
         div.innerHTML = `
             <div class="frame-header">
                 <span>${frame.name}</span>
                 <span style="opacity:0.5">#${frame.id.split('_')[1]}</span>
             </div>
             ${argsHtml}
+            ${returnHtml}
         `;
-        container.appendChild(div);
+        // Prepend to show newest at top (if using flex-col)
+        // Or append if using column-reverse. 
+        // We established CSS is column-reverse? No, let's just use prepend to be sure?
+        // Wait, standard DOM order:
+        // Container = Flex Col.
+        // Append = Bottom.
+        // We want Stack Top at Top.
+        // So PREPEND.
+        container.insertBefore(div, container.firstChild);
     });
 }
 

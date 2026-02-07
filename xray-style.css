@@ -267,6 +267,54 @@ button:hover {
     gap: 10px;
 }
 
+/* Final Result Panel */
+#finalResultPanel {
+    margin-bottom: 1rem;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    /* Green tint */
+    background: rgba(16, 185, 129, 0.05);
+}
+
+#finalResultPanel.hidden {
+    display: none;
+}
+
+.result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+    text-align: center;
+    padding: 1rem;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+/* Returning Stack Frame */
+.stack-frame.returning {
+    border-color: #10b981;
+    /* Green */
+    background: rgba(16, 185, 129, 0.1);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+.return-value-badge {
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(16, 185, 129, 0.2);
+    border-radius: 4px;
+    color: #10b981;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.return-arrow {
+    margin-right: 0.5rem;
+}
+
 #btnRun:hover {
     background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
