@@ -4,90 +4,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recursion & Backtracking Visualizer</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for premium feel -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Recursion X-Ray</title>
+    <link rel="stylesheet" href="xray-style.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap"
         rel="stylesheet">
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- LEFT PANEL: Controls & Code -->
-        <aside class="sidebar">
-            <div class="logo">
-                <h1>Recursion<span class="highlight">Viz</span></h1>
+    <div class="xray-container">
+        <!-- LEFT: Code Deck -->
+        <aside class="left-panel">
+            <div class="panel-header">
+                <h2>SOURCE_CODE</h2>
+                <span class="status-dot"></span>
             </div>
+            <textarea id="codeEditor" spellcheck="false">
+void permute(vector<int> nums, vector<int> curr, vector<bool> visited) {
+    if (curr.size() == nums.size()) {
+        cout << "Found solution!";
+        return;
+    }
 
-            <div class="control-group">
-                <label>Algorithm</label>
-                <select id="algoSelect">
-                    <option value="factorial">Factorial (Linear)</option>
-                    <option value="permutations">Permutations (Backtracking)</option>
-                </select>
-            </div>
+    for (int i = 0; i < nums.size(); i++) {
+        if (visited[i]) continue;
 
-            <div class="control-group">
-                <label>Input</label>
-                <input type="text" id="algoInput" value="3">
-                <button id="btnRun" class="primary-btn">Run Simulation</button>
-            </div>
+        visited[i] = true;
+        curr.push_back(nums[i]);
 
-            <div class="code-container">
-                <pre><code id="codeDisplay" class="language-javascript">Select an algorithm...</code></pre>
-            </div>
+        permute(nums, curr, visited);
 
-            <div class="playback-controls">
-                <button id="btnPrev" title="Step Back">⏮</button>
-                <button id="btnPlayPause" title="Play/Pause">▶</button>
-                <button id="btnNext" title="Step Forward">⏭</button>
-            </div>
-            <input type="range" id="progressSlider" min="0" max="0" value="0">
-            <div class="speed-control">
-                <label>Speed</label>
-                <input type="range" id="speedSlider" min="100" max="2000" value="1000">
-            </div>
+        visited[i] = false;
+        curr.pop_back();
+    }
+}
+
+// Driver Code
+let nums = [1, 2, 3];
+let visited = [false, false, false];
+permute(nums, [], visited);
+            </textarea>
+            <button id="btnRun" class="cyber-btn">COMPILE & RUN</button>
         </aside>
 
-        <!-- RIGHT PANEL: Visualization -->
-        <main class="main-view">
-            <!-- Educational Overlay -->
-            <div id="educationalOverlay" class="educational-overlay">
-                <h3 id="stepTitle">Ready</h3>
-                <p id="stepDescription">Select an algorithm and click Run to start understanding recursion.</p>
-            </div>
-
-            <div class="vis-layout">
-                <!-- Stack Section -->
-                <section class="stack-section">
-                    <h2>Call Stack</h2>
-                    <div id="stackContainer" class="stack-container">
-                        <!-- Stack frames go here -->
-                    </div>
-                </section>
-
-                <!-- Tree Section -->
-                <section class="tree-section">
-                    <div class="section-header">
-                        <h2>Recursion Tree</h2>
-                        <div class="legend">
-                            <span class="legend-item"><span class="dot active"></span> Active</span>
-                            <span class="legend-item"><span class="dot returned"></span> Returned</span>
-                            <span class="legend-item"><span class="dot visited"></span> Visited</span>
-                        </div>
-                    </div>
-                    <div id="treeContainer" class="tree-container">
-                        <!-- SVG Tree goes here -->
-                    </div>
-                </section>
+        <!-- CENTER: Holodeck (3D) -->
+        <main id="visContainer" class="vis-container">
+            <div class="hud-overlay">
+                <div id="professorText" class="professor-panel">
+                    System Ready. Awaiting Code Injection...
+                </div>
             </div>
         </main>
+
+        <!-- BOTTOM: Timeline -->
+        <div class="bottom-panel">
+            <button id="btnPrev">⏪</button>
+            <button id="btnPlay">▶</button>
+            <button id="btnNext">⏩</button>
+            <input type="range" id="slider" min="0" max="100" value="0" style="width: 100%">
+        </div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>
