@@ -4,7 +4,8 @@ class SceneManager {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x050510); // Deep space blue/black
+        this.scene = new THREE.Scene();
+        this.scene.background = null; // Transparent to show CSS background
         this.scene.fog = new THREE.FogExp2(0x050510, 0.002);
 
         this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
