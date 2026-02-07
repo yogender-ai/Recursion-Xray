@@ -44,6 +44,19 @@ class SceneManager {
         this.resizeObserver.observe(this.container);
     }
 
+    onResize(rect) {
+        if (!this.camera || !this.renderer) return;
+
+        const width = rect.width;
+        const height = rect.height;
+
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+
+        // Update renderer size
+        this.renderer.setSize(width, height, false); // false to prevent style overwrite if using CSS
+    }
+
     initLights() {
         // Ambient - slightly brighter/blue for cyber feel
         const ambi = new THREE.AmbientLight(0x2a2a40, 0.6);
