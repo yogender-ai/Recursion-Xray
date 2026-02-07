@@ -174,13 +174,16 @@ class RecursionTreeVisualizer {
         const finalHeight = Math.max(height, containerHeight);
 
         console.log(`[TreeViz] Container Size: ${containerWidth}x${containerHeight}`);
-        console.log(`[TreeViz] SVG Size: ${finalWidth}x${finalHeight}`);
 
-        svg.style.width = `${finalWidth}px`;
-        svg.style.height = `${finalHeight}px`;
-        // Use min-width to ensure scrolling if content is larger
-        svg.style.minWidth = `${Math.max(width, finalWidth)}px`;
-        svg.style.minHeight = `${Math.max(height, finalHeight)}px`;
+        // FIX: Don't set pixel size, let it fill container
+        svg.style.width = '100%';
+        svg.style.height = '100%';
+        svg.style.display = "block";
+        svg.style.cursor = "grab";
+        svg.style.background = "rgba(20, 30, 50, 0.5)"; // Debug background
+
+        // Remove min-width to prevent overflow
+        // svg.style.minWidth = ...
         svg.style.display = "block";
         svg.style.background = "rgba(20, 30, 50, 0.5)"; // Debug background
 

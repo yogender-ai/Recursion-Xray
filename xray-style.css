@@ -169,14 +169,11 @@ button:hover {
 
 /* Right Panel - Unified Scroll */
 .right-panel {
-    overflow: auto;
-    /* Scroll the whole panel (X and Y) */
-    display: block;
-    /* Stack children normally */
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    /* Fill the grid area */
-    max-height: none;
-    /* Remove conflicting constraint */
+    overflow: hidden;
+    /* Prevent global scroll */
 }
 
 /* Remove internal scrolling constraints */
@@ -214,10 +211,29 @@ button:hover {
 }
 
 .half-height {
-    flex: none;
-    height: auto;
-    min-height: 0;
+    flex: 1;
+    overflow: hidden;
+    /* Ensure content stays inside */
+    display: flex;
+    flex-direction: column;
     border-bottom: 1px solid var(--border-color);
+}
+
+/* Stack container needs to scroll internally now */
+#stackContainer {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+#treeContainer {
+    flex: 1;
+    overflow: hidden;
+    /* For Pan/Zoom */
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    /* Visual separation */
 }
 
 /* Layout Override */
