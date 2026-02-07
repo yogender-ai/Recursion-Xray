@@ -60,8 +60,8 @@ class RecursionTreeVisualizer {
     // Simple layout algorithm
     calculateLayout(node, depth) {
         const NODE_SIZE = 50;
-        const GAP_X = 20;
-        const LEVEL_HEIGHT = 80;
+        const GAP_X = 40; // Increased gap
+        const LEVEL_HEIGHT = 100; // Increased level height
 
         node.y = depth * LEVEL_HEIGHT + 40; // Top padding
 
@@ -92,7 +92,7 @@ class RecursionTreeVisualizer {
         const positionLeaves = (node) => {
             if (node.children.length === 0) {
                 node.x = currentX;
-                currentX += 70; // Node width + gap
+                currentX += 90; // Node width (50) + gap (40)
             } else {
                 node.children.forEach(positionLeaves);
                 // Parent is centered above children
@@ -108,15 +108,34 @@ class RecursionTreeVisualizer {
     renderStaticTree() {
         if (!this.root) return;
 
+        // Calculate Bounding Box
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+
+        this.nodes.forEach(node => {
+            if (node.x < minX) minX = node.x;
+            if (node.x > maxX) maxX = node.x;
+            if (node.y < minY) minY = node.y;
+            if (node.y > maxY) maxY = node.y;
+        });
+
+        // Add Padding
+        const padding = 50;
+        const width = (maxX - minX) + (padding * 2);
+        const height = (maxY - minY) + (padding * 2);
+
         // SVG Container
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.style.width = "100%";
-        svg.style.height = "100%";
-        // Auto-scale? For now let's just make it big enough
-        const maxX = Array.from(this.nodes.values()).reduce((max, n) => Math.max(max, n.x), 0);
-        const maxY = Array.from(this.nodes.values()).reduce((max, n) => Math.max(max, n.y), 0);
 
-        svg.setAttribute("viewBox", `0 0 ${maxX + 100} ${maxY + 100}`);
+        // IMPORTANT: Set explicit pixel size to force scrolling in parent div
+        svg.style.width = `${width}px`;
+        svg.style.height = `${height}px`;
+        svg.style.display = "block"; // Remove descender gap
+
+        // ViewBox matches the coordinate system (handling minX offset if needed)
+        // We shift everything by -minX + padding to ensure it starts at padding
+        svg.setAttribute("viewBox", `${minX - padding} ${minY - padding} ${width} ${height}`);
+
         this.container.appendChild(svg);
 
         // Draw Links
@@ -128,9 +147,9 @@ class RecursionTreeVisualizer {
                     line.setAttribute("y1", node.y);
                     line.setAttribute("x2", child.x);
                     line.setAttribute("y2", child.y);
-                    line.setAttribute("stroke", "#cbd5e1");
+                    line.setAttribute("stroke", "rgba(60, 200, 255, 0.3)"); // Subtle Cyan
                     line.setAttribute("stroke-width", "2");
-                    line.setAttribute("id", `link-${child.id}`); // Link to child
+                    line.setAttribute("id", `link-${child.id}`);
                     line.setAttribute("class", "tree-link");
                     svg.appendChild(line);
                 });
