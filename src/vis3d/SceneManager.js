@@ -35,7 +35,13 @@ class SceneManager {
 
         this.treeGroup.position.set(20, 0, 0); // Offset tree to right
 
-        window.addEventListener('resize', this.onWindowResize.bind(this));
+        // Robust Resize Handling
+        this.resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                this.onResize(entry.contentRect);
+            }
+        });
+        this.resizeObserver.observe(this.container);
     }
 
     initLights() {
@@ -78,12 +84,6 @@ class SceneManager {
 
         this.starfield = new THREE.Points(geometry, material);
         this.scene.add(this.starfield);
-    }
-
-    onWindowResize() {
-        this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     }
 
     render() {
