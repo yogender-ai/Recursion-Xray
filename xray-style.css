@@ -255,6 +255,16 @@ button:hover {
     font-weight: 800;
     letter-spacing: 1px;
     margin-top: 1.5rem;
+
+    /* Override circular generic button styles */
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+    border-radius: 8px;
+    /* Rounded rect */
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
 #btnRun:hover {
