@@ -47,7 +47,55 @@ body {
     /* Wider sidebars */
     flex: 1;
     overflow: hidden;
+    overflow: hidden;
     position: relative;
+    transition: all 0.5s ease;
+}
+
+/* Presentation Mode: Hides sidebars */
+body.presentation-mode .main-content {
+    grid-template-columns: 0px 1fr 0px;
+}
+
+body.presentation-mode .left-panel,
+body.presentation-mode .right-panel,
+body.presentation-mode .cyber-header,
+body.presentation-mode .cyber-footer {
+    /* Optional: Hide header/footer too? User said "maximize for presenting". 
+       Usually presenting still needs controls (footer).
+       Let's keep footer, maybe hide header or keep it minimal.
+       Let's just hide sidebars for now. */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-20px);
+}
+
+body.presentation-mode .right-panel {
+    transform: translateX(20px);
+}
+
+body.presentation-mode .vis-container {
+    z-index: 100;
+    /* Ensure it's on top if overlaps */
+}
+
+/* Exit Button for Presentation Mode */
+#btnExitPresent {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 200;
+    display: none;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--accent-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+body.presentation-mode #btnExitPresent {
+    display: block;
 }
 
 /* --- Glass Panels --- */

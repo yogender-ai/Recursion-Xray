@@ -295,6 +295,33 @@ document.getElementById('btnTheme').addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
 });
 
+// Presentation Mode Toggle
+const btnPresent = document.getElementById('btnPresent');
+// Create Exit Button dynamically if not in HTML
+let btnExitPresent = document.getElementById('btnExitPresent');
+if (!btnExitPresent) {
+    btnExitPresent = document.createElement('button');
+    btnExitPresent.id = 'btnExitPresent';
+    btnExitPresent.textContent = '❌ EXIT PRESENTATION';
+    btnExitPresent.style.display = 'none'; // Managed by CSS
+    document.body.appendChild(btnExitPresent);
+}
+
+function togglePresentation() {
+    document.body.classList.toggle('presentation-mode');
+
+    // Resize Scene because grid changed
+    // Wait for transition?
+    setTimeout(() => {
+        // Trigger resize on SceneManager
+        // We need to access the container via the observer or manually call resize
+        // The ResizeObserver in SceneManager should handle it!
+    }, 550);
+}
+
+btnPresent.addEventListener('click', togglePresentation);
+btnExitPresent.addEventListener('click', togglePresentation);
+
 // --- Initial Setup ---
 
 // Populate Dropdown from Registry
