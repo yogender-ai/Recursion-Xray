@@ -180,8 +180,8 @@ button:hover {
 }
 
 /* Remove internal scrolling constraints */
-.stack-list,
-.tree-viz {
+/* Remove internal scrolling constraints */
+.stack-list {
     overflow: visible;
     /* Let parent handle scroll */
     flex: none;
@@ -192,6 +192,25 @@ button:hover {
     /* Allow growing horizontally */
     min-width: 100%;
     /* But at least full width */
+}
+
+.tree-viz {
+    overflow: hidden;
+    /* Hide overflow for Panning */
+    cursor: grab;
+    /* Indicate draggable */
+    flex: 1;
+    /* Take remaining space */
+    position: relative;
+    /* Ensure SVG fills it for interacting */
+}
+
+/* Make SVG fill container to catch events */
+.tree-viz svg {
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
 }
 
 .half-height {

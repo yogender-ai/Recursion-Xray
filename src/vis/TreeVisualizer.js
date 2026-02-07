@@ -265,70 +265,96 @@ class RecursionTreeVisualizer {
         });
 
         // Apply initial scale
-        this.updateTransform();
-    }
+        // Center the root node in the view
+        if (this.root && this.root.x) {
+            const containerWidth = this.container.clientWidth || 500;
+            const containerHeight = this.container.clientHeight || 500;
 
-    update(index, timeline) {
-        // Determine the state of each node at this timestamp
-        // We know which frames are ACTIVE, RETURNED, or NOT STARTED.
+            // Center X, Top Y (with padding)
+            this.translateX = containerWidth / 2 - this.root.x;
+            this.translateY = 50; // Padding from top
+            this.scale = 1.0;
+        } else {
+            // Apply initial scale
+            // Center the root node in the view
+            if (this.root && this.root.x) {
+                const containerWidth = this.container.clientWidth || 500;
+                const containerHeight = this.container.clientHeight || 500;
 
-        // 1. Identify active frames in the stack
-        const activeFrames = new Set();
-        const returnedFrames = new Set();
-        const createdFrames = new Set();
-
-        for (let i = 0; i <= index; i++) {
-            const e = timeline[i];
-            if (e.type === 'CALL') {
-                createdFrames.add(e.frameId);
-                activeFrames.add(e.frameId);
-            } else if (e.type === 'RETURN') {
-                activeFrames.delete(e.frameId);
-                returnedFrames.add(e.frameId);
+                // Center X, Top Y (with padding)
+                this.translateX = containerWidth / 2 - this.root.x;
+                this.translateY = 50; // Padding from top
+                this.scale = 1.0;
+            } else {
+                this.translateX = 0;
+                this.translateY = 0;
+                this.scale = 1.0;
             }
+
+            this.updateTransform();
         }
 
-        // 2. Update styles
-        this.nodes.forEach(node => {
-            const el = document.getElementById(`node-${node.id}`);
-            const link = document.getElementById(`link-${node.id}`);
-            if (!el) return;
+        update(index, timeline) {
+            // Determine the state of each node at this timestamp
+            // We know which frames are ACTIVE, RETURNED, or NOT STARTED.
 
-            const circle = el.querySelector('circle');
+            // 1. Identify active frames in the stack
+            const activeFrames = new Set();
+            const returnedFrames = new Set();
+            const createdFrames = new Set();
 
-            if (activeFrames.has(node.id)) {
-                // Active
-                el.style.opacity = "1";
-                circle.setAttribute("fill", "#dbeafe"); // Light blue
-                circle.setAttribute("stroke", "#2563eb"); // Blue
-                circle.setAttribute("stroke-width", "3");
-                if (link) link.setAttribute("stroke", "#2563eb");
-            } else if (returnedFrames.has(node.id)) {
-                // Returned
-                el.style.opacity = "1";
-                circle.setAttribute("fill", "#dcfce7"); // Light green
-                circle.setAttribute("stroke", "#10b981"); // Green
-                circle.setAttribute("stroke-width", "2");
-                if (link) link.setAttribute("stroke", "#10b981");
-            } else if (createdFrames.has(node.id)) {
-                // Technically shouldn't happen if created=active until return, 
-                // but possible if we stepped back? 
-                // If it's in created but not active and not returned? 
-                // Means it's Popped but not "Returned"? (e.g. error)
-                // Or, if we are doing Backtracking, "Returned" covers it.
-                // Wait, for Permutations:
-                // We pop, but do we "Return"?
-                // My Permutation code calls 'return' only at base case or end of loop.
-                // It does NOT call 'return' when just popping to backtrack?
-                // Actually, recursion ALWAYS returns.
-                // Even implicit return is a return.
-            } else {
-                // Not reached yet
-                el.style.opacity = "0.1";
-                circle.setAttribute("fill", "#ffffff");
-                circle.setAttribute("stroke", "#cbd5e1");
-                if (link) link.setAttribute("stroke", "#cbd5e1");
+            for (let i = 0; i <= index; i++) {
+                const e = timeline[i];
+                if (e.type === 'CALL') {
+                    createdFrames.add(e.frameId);
+                    activeFrames.add(e.frameId);
+                } else if (e.type === 'RETURN') {
+                    activeFrames.delete(e.frameId);
+                    returnedFrames.add(e.frameId);
+                }
             }
-        });
+
+            // 2. Update styles
+            this.nodes.forEach(node => {
+                const el = document.getElementById(`node-${node.id}`);
+                const link = document.getElementById(`link-${node.id}`);
+                if (!el) return;
+
+                const circle = el.querySelector('circle');
+
+                if (activeFrames.has(node.id)) {
+                    // Active
+                    el.style.opacity = "1";
+                    circle.setAttribute("fill", "#dbeafe"); // Light blue
+                    circle.setAttribute("stroke", "#2563eb"); // Blue
+                    circle.setAttribute("stroke-width", "3");
+                    if (link) link.setAttribute("stroke", "#2563eb");
+                } else if (returnedFrames.has(node.id)) {
+                    // Returned
+                    el.style.opacity = "1";
+                    circle.setAttribute("fill", "#dcfce7"); // Light green
+                    circle.setAttribute("stroke", "#10b981"); // Green
+                    circle.setAttribute("stroke-width", "2");
+                    if (link) link.setAttribute("stroke", "#10b981");
+                } else if (createdFrames.has(node.id)) {
+                    // Technically shouldn't happen if created=active until return, 
+                    // but possible if we stepped back? 
+                    // If it's in created but not active and not returned? 
+                    // Means it's Popped but not "Returned"? (e.g. error)
+                    // Or, if we are doing Backtracking, "Returned" covers it.
+                    // Wait, for Permutations:
+                    // We pop, but do we "Return"?
+                    // My Permutation code calls 'return' only at base case or end of loop.
+                    // It does NOT call 'return' when just popping to backtrack?
+                    // Actually, recursion ALWAYS returns.
+                    // Even implicit return is a return.
+                } else {
+                    // Not reached yet
+                    el.style.opacity = "0.1";
+                    circle.setAttribute("fill", "#ffffff");
+                    circle.setAttribute("stroke", "#cbd5e1");
+                    if (link) link.setAttribute("stroke", "#cbd5e1");
+                }
+            });
+        }
     }
-}
