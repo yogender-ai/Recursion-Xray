@@ -134,3 +134,21 @@ button:hover {
     border-color: var(--neon-blue);
     background: rgba(59, 130, 246, 0.1);
 }
+
+.vis-3d-stage {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    /* Behind HUD */
+}
+
+/* Ensure scrollbars for right panel content */
+.stack-list,
+.tree-viz {
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
+}

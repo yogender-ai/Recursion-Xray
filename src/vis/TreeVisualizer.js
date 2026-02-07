@@ -129,16 +129,22 @@ class RecursionTreeVisualizer {
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
         // Force dimensions
-        const finalWidth = Math.max(width, this.container.clientWidth || 500);
-        const finalHeight = Math.max(height, this.container.clientHeight || 500);
+        // Force dimensions
+        // Fallback to Calculated Width if Container is 0 (e.g. hidden tab)
+        const containerWidth = this.container.clientWidth || 500;
+        const containerHeight = this.container.clientHeight || 500;
 
-        console.log(`[TreeViz] Container Size: ${this.container.clientWidth}x${this.container.clientHeight}`);
+        const finalWidth = Math.max(width, containerWidth);
+        const finalHeight = Math.max(height, containerHeight);
+
+        console.log(`[TreeViz] Container Size: ${containerWidth}x${containerHeight}`);
         console.log(`[TreeViz] SVG Size: ${finalWidth}x${finalHeight}`);
 
         svg.style.width = `${finalWidth}px`;
         svg.style.height = `${finalHeight}px`;
-        svg.style.minWidth = `${width}px`;
-        svg.style.minHeight = `${height}px`;
+        // Use min-width to ensure scrolling if content is larger
+        svg.style.minWidth = `${Math.max(width, finalWidth)}px`;
+        svg.style.minHeight = `${Math.max(height, finalHeight)}px`;
         svg.style.display = "block";
         svg.style.background = "rgba(20, 30, 50, 0.5)"; // Debug background
 
