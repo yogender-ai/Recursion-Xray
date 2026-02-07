@@ -28,18 +28,23 @@ class StackVisualizer3D {
         }
 
         // Diff and Animate
-        // 1. Add new frames
+        // 2. Diff and Animate
         currentFrames.forEach((eCall, depth) => {
             if (!this.frames.has(eCall.frameId)) {
                 this.createFrame(eCall.frameId, eCall.data.frame, depth);
-            } else {
-                // Update position if depth changed (rare in strict stack, but good for robustness)
-                const mesh = this.frames.get(eCall.frameId);
-                // Target Z: -depth * spacing
-                // Move logic here? Or in create?
-                // For now, assume strict stack order = depth
             }
         });
+
+        // 3. Auto-Frame: Move the Stack Group so the active frame is always at Z = -5
+        // effectively "pushing" old frames back.
+        // or move Camera? Moving group is easier.
+        const activeDepth = currentFrames.length - 1;
+        if (activeDepth >= 0) {
+            // We want activeDepth * spacing to be at some fixed visual Z.
+            // Say Z=0 is the "StageFront".
+            const targetZ = activeDepth * this.spacing;
+            this.sceneManager.stackGroup.position.z = targetZ;
+        }
 
         // 2. Remove returns
         this.frames.forEach((mesh, id) => {
