@@ -215,6 +215,7 @@ body.presentation-mode #btnExitPresent {
     box-sizing: border-box;
 }
 
+.cyber-select optgroup,
 .cyber-select option {
     background-color: #050510;
     color: var(--text-primary);
