@@ -167,6 +167,12 @@ body {
     box-sizing: border-box;
 }
 
+.cyber-select option {
+    background-color: #050510;
+    color: var(--text-primary);
+    padding: 10px;
+}
+
 .cyber-select:hover,
 .cyber-input:hover {
     border-color: rgba(124, 58, 237, 0.3);
