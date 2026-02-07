@@ -177,6 +177,29 @@ button:hover {
     border-bottom: 1px solid var(--border-color);
 }
 
+/* Layout Override */
+.xray-container {
+    grid-template-columns: 25% 1fr 25%;
+    /* Fixed 25% Sidebars */
+}
+
+/* Compile & Run Button */
+#btnRun {
+    background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-top: 1.5rem;
+}
+
+#btnRun:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
+    transform: translateY(-1px);
+}
+
 /* Cyber Inputs & Selects */
 .cyber-select,
 .cyber-input {
