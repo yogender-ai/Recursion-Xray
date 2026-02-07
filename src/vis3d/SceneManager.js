@@ -1,6 +1,6 @@
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+// Depends on THREE (loaded globally)
 
-export class SceneManager {
+class SceneManager {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
         this.scene = new THREE.Scene();
