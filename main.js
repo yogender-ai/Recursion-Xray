@@ -45,7 +45,9 @@ document.getElementById('btnRun').addEventListener('click', async () => {
 
         // Wrap in async IIFE
         await eval(`(async () => { 
-            ${jsCode} 
+            ${jsCode}
+            // Auto-detect main
+            if(typeof main === 'function') { await main(); }
         })()`);
 
         timeline = tracer.getTimeline();

@@ -24,12 +24,21 @@ export class CppTranspiler {
         jsCode = jsCode.replace(/#include\s+<.*?>/g, '');
         jsCode = jsCode.replace(/using\s+namespace\s+std;/g, '');
 
-        // 2. Transpile Types -> let
+        // 2. Transpile Cout
+        // cout << "Msg" << endl; -> tracer.log("Msg");
+        // Naive: cout << (.*);
+        jsCode = jsCode.replace(/cout\s*<<\s*(.*?);/g, (match, content) => {
+            // Remove " << endl" or " << "\n" if present
+            let msg = content.replace(/<<\s*endl/g, '').trim();
+            return `tracer.log(${msg}, 0);`;
+        });
+
+        // 3. Transpile Types -> let
         // vector<int> x -> let x
         jsCode = jsCode.replace(/vector\s*<.*?>/g, 'let');
         jsCode = jsCode.replace(/\b(int|void|string|bool|double)\b/g, 'let');
 
-        // 3. Transpile C++ Vector Methods -> JS Array Methods
+        // 4. Transpile C++ Vector Methods -> JS Array Methods
         // .push_back(...) -> .push(...)
         jsCode = jsCode.replace(/\.push_back\(/g, '.push(');
         // .pop_back() -> .pop()
