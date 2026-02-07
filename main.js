@@ -29,34 +29,52 @@ animate();
 // --- Controls ---
 document.getElementById('btnRun').addEventListener('click', async () => {
     const rawCpp = elEditor.value;
-    const jsCode = transpiler.transpile(rawCpp);
+    elOverlay.textContent = "Compiling...";
 
-    console.log("Transpiled JS:\n", jsCode); // User can debug
-
-    tracer.reset();
-
-    // Execute
     try {
-        // We need to run the code. It defines functions.
-        // We need to call the entry point (e.g., 'solve' or 'main' or the first fn?);
-        // Let's assume the user calls the function at the end or we detect it.
-        // For the Prototype, let's append a call to 'permute([1,2,3])' or similar if detected?
-        // Better: Expect the user to write the call.
+        const jsCode = transpiler.transpile(rawCpp);
+        console.log("Transpiled JS:\n", jsCode);
 
-        // Wrap in async IIFE
-        await eval(`(async () => { 
-            ${jsCode}
-            // Auto-detect main
-            if(typeof main === 'function') { await main(); }
-        })()`);
-
-        timeline = tracer.getTimeline();
+        // Reset
+        tracer.reset();
         stackVis.reset();
+        timeline = [];
         currentIndex = 0;
-        updateVisuals(0);
+
+        // Execute
+        // We wrap in an async function to allow await
+        const wrappedCode = `
+            (async () => {
+                try {
+                    ${jsCode}
+                    
+                    // Attempt to auto-call main if it exists
+                    if (typeof main === 'function') { await main(); }
+
+                    // Assuming functionality like 'permute' might be called globally in the user script
+                    // The default example has global code at the bottom.
+                } catch (e) {
+                    console.error("Runtime Error:", e);
+                    throw e; // Re-throw to be caught by outer catch
+                }
+            })()
+        `;
+
+        await eval(wrappedCode);
+
+        // Post-Run
+        timeline = tracer.getTimeline();
+        console.log("Timeline Generated:", timeline);
+
+        if (timeline.length > 0) {
+            updateVisuals(0);
+            elOverlay.textContent = "Execution Complete.";
+        } else {
+            elOverlay.textContent = "Execution Complete (No Recursion Detected).";
+        }
 
     } catch (e) {
-        console.error("Execution Error:", e);
+        console.error("Compilation/Runtime Error:", e);
         elOverlay.textContent = "Error: " + e.message;
     }
 });
@@ -73,6 +91,36 @@ document.getElementById('btnNext').addEventListener('click', () => {
     }
 });
 
+document.getElementById('btnPrev').addEventListener('click', () => {
+    if (currentIndex > 0) {
+        currentIndex--;
+        updateVisuals(currentIndex);
+    }
+});
+
+document.getElementById('btnPlay').addEventListener('click', () => {
+    if (isPlaying) {
+        isPlaying = false;
+        document.getElementById('btnPlay').textContent = "▶";
+    } else {
+        isPlaying = true;
+        document.getElementById('btnPlay').textContent = "⏸";
+        playLoop();
+    }
+});
+
+function playLoop() {
+    if (!isPlaying) return;
+    if (currentIndex < timeline.length - 1) {
+        currentIndex++;
+        updateVisuals(currentIndex);
+        setTimeout(playLoop, 500); // 500ms delay
+    } else {
+        isPlaying = false;
+        document.getElementById('btnPlay').textContent = "▶";
+    }
+}
+
 function updateVisuals(index) {
     if (!timeline[index]) return;
 
@@ -81,7 +129,13 @@ function updateVisuals(index) {
 
     // UI Update
     const event = timeline[index];
-    elOverlay.textContent = `${event.type}: ${event.message}`;
-    document.getElementById('slider').max = timeline.length - 1;
-    document.getElementById('slider').value = index;
+    const msg = event.message || event.type;
+    elOverlay.textContent = `${event.type}: ${msg}`;
+
+    const slider = document.getElementById('slider');
+    slider.max = timeline.length - 1;
+    slider.value = index;
+
+    // Highlight Code Line
+    // (If we had a way to map lines back to editor)
 }
