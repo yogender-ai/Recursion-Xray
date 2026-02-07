@@ -61,8 +61,9 @@ class StackVisualizer3D {
             transparent: true,
             opacity: 0.9,
             side: THREE.DoubleSide,
-            blending: THREE.NormalBlending, // Changed from Additive to Normal for better visibility
-            depthWrite: false
+            blending: THREE.NormalBlending,
+            depthWrite: true, // Fix depth sorting issue (frames won't look "inside out")
+            alphaTest: 0.1 // Cleaner edges
         });
 
         const mesh = new THREE.Mesh(geometry, material);

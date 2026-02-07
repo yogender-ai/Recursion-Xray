@@ -145,10 +145,27 @@ button:hover {
     /* Behind HUD */
 }
 
-/* Ensure scrollbars for right panel content */
+/* Right Panel - Unified Scroll */
+.right-panel {
+    overflow-y: auto;
+    /* Scroll the whole panel */
+    display: block;
+    /* Stack children normally */
+}
+
+/* Remove internal scrolling constraints */
 .stack-list,
 .tree-viz {
-    overflow: auto;
-    flex: 1;
+    overflow: visible;
+    flex: none;
+    height: auto;
+    min-height: 200px;
+    /* Minimum size */
+}
+
+.half-height {
+    flex: none;
+    height: auto;
     min-height: 0;
+    border-bottom: 1px solid var(--border-color);
 }

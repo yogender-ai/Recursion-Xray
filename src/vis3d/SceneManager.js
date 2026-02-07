@@ -23,8 +23,8 @@ class SceneManager {
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
-        this.controls.screenSpacePanning = false;
-        this.controls.minDistance = 5;
+        this.controls.screenSpacePanning = true; // Allow panning up/down/left/right
+        this.controls.minDistance = 2; // Allow zooming closer
         this.controls.maxDistance = 100;
 
         // Layers
