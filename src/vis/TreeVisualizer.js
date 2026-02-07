@@ -127,10 +127,12 @@ class RecursionTreeVisualizer {
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
         // Force dimensions
+        // Force dimensions
         svg.style.width = `${Math.max(width, this.container.clientWidth)}px`;
         svg.style.height = `${Math.max(height, this.container.clientHeight)}px`;
-        svg.style.minWidth = "100%";
-        svg.style.minHeight = "100%";
+        // Remove 100% constraints that might shrink it
+        svg.style.minWidth = `${width}px`;
+        svg.style.minHeight = `${height}px`;
         svg.style.display = "block";
 
         // Center content if it's smaller than container

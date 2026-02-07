@@ -164,6 +164,9 @@ function updateVisuals(index) {
     // 3D Stack Update
     stackVis.update(index, timeline);
 
+    // 2D Stack Update (DOM)
+    render2DStack(index, timeline);
+
     // 2D Tree Update
     treeVis.update(index, timeline);
 
@@ -176,6 +179,62 @@ function updateVisuals(index) {
     if (event.lineNumber) {
         highlightLine(event.lineNumber);
     }
+}
+
+// Render the 2D DOM Stack in the Right Panel
+function render2DStack(index, timeline) {
+    const container = document.getElementById('stackContainer');
+    container.innerHTML = '';
+
+    // Reconstruct stack state up to current index
+    const activeStack = [];
+    for (let i = 0; i <= index; i++) {
+        const e = timeline[i];
+        if (e.type === 'CALL') {
+            activeStack.push(e);
+        } else if (e.type === 'RETURN') {
+            // Remove the corresponding frame
+            // We search from end to find matching frameId
+            for (let j = activeStack.length - 1; j >= 0; j--) {
+                if (activeStack[j].frameId === e.frameId) {
+                    activeStack.splice(j, 1);
+                    break;
+                }
+            }
+        }
+    }
+
+    // Render from top (newest) to bottom (oldest)
+    // activeStack has oldest at 0.
+    // We want newest at top -> reverse iteration or flex-direction: column-reverse
+    // CSS has flex-direction: column for panel, but stack-list uses column-reverse? 
+    // Let's check CSS. .stack-list { flex-direction: column-reverse; } 
+    // So we append oldest first, and CSS reverses it?
+    // Actually, standard stack view usually lists newest at top.
+
+    // Let's render standard DIVs and let CSS handle order.
+    activeStack.forEach(e => {
+        const frame = e.data.frame;
+        const div = document.createElement('div');
+        div.className = 'stack-frame active';
+
+        let argsHtml = '';
+        if (frame.args) {
+            Object.entries(frame.args).forEach(([k, v]) => {
+                let val = JSON.stringify(v);
+                argsHtml += `<div class="var-row"><span>${k}</span><span>${val}</span></div>`;
+            });
+        }
+
+        div.innerHTML = `
+            <div class="frame-header">
+                <span>${frame.name}</span>
+                <span style="opacity:0.5">#${frame.id.split('_')[1]}</span>
+            </div>
+            ${argsHtml}
+        `;
+        container.appendChild(div);
+    });
 }
 
 // Code Highlighter with Scroll Sync
