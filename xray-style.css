@@ -107,6 +107,28 @@ body {
 }
 
 /* Bottom Controls */
+.zoom-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.zoom-controls .icon-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--neon-blue);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.zoom-controls .icon-btn:hover {
+    background: var(--neon-blue);
+    color: white;
+}
+
 .bottom-panel {
     grid-column: 1 / 3;
     background: var(--panel-bg);

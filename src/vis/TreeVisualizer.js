@@ -5,6 +5,42 @@ class RecursionTreeVisualizer {
         this.root = null;
         this.width = 0;
         this.height = 0;
+        this.scale = 1.0;
+        this.mainGroup = null; // Scale group
+    }
+
+    zoomIn() {
+        this.scale = Math.min(this.scale * 1.2, 5.0);
+        this.updateTransform();
+    }
+
+    zoomOut() {
+        this.scale = Math.max(this.scale / 1.2, 0.2);
+        this.updateTransform();
+    }
+
+    updateTransform() {
+        if (this.mainGroup) {
+            // Transform origin? Center?
+            // Simple scale for now.
+            this.mainGroup.setAttribute("transform", `scale(${this.scale})`);
+
+            // Adjust SVG size to allow scrolling?
+            // If we zoom in, the content gets bigger.
+            // But 'scale' on a group inside SVG doesn't change SVG dimensions.
+            // We might need to scale width/height of SVG too?
+            // Or just visual zoom? Use visual zoom + CSS overflow.
+            // Better: update SVG width/height based on scale.
+
+            // Re-render check?
+            // Actually, let's just scale the group. 
+            // The browser scrollbars will handle it IF the SVG size matches the scaled content.
+            // But SVG viewbox...
+
+            // Simplest: Scale the group, and if we want scrollbars to update,
+            // we should probably increase SVG width/height.
+            // For now, let's just scale visual.
+        }
     }
 
     reset(timeline) {
@@ -165,6 +201,15 @@ class RecursionTreeVisualizer {
         debugRect.setAttribute("stroke-width", "5");
         svg.appendChild(debugRect);
 
+        svg.appendChild(debugRect);
+
+        // Main Scale Group
+        this.mainGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        this.mainGroup.setAttribute("id", "tree-scale-group");
+        // Center the group initially? Or just 0,0
+        // If we scale, we scale from 0,0
+        svg.appendChild(this.mainGroup);
+
         // Draw Links
         this.nodes.forEach(node => {
             if (node.children.length > 0) {
@@ -178,7 +223,7 @@ class RecursionTreeVisualizer {
                     line.setAttribute("stroke-width", "2");
                     line.setAttribute("id", `link-${child.id}`);
                     line.setAttribute("class", "tree-link");
-                    svg.appendChild(line);
+                    this.mainGroup.appendChild(line);
                 });
             }
         });
@@ -216,8 +261,11 @@ class RecursionTreeVisualizer {
 
             g.appendChild(circle);
             g.appendChild(text);
-            svg.appendChild(g);
+            this.mainGroup.appendChild(g);
         });
+
+        // Apply initial scale
+        this.updateTransform();
     }
 
     update(index, timeline) {
