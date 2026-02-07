@@ -145,6 +145,94 @@ body {
 /* ... */
 
 /* --- Right Panel Components --- */
+/* --- Controls --- */
+.control-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.cyber-select,
+.cyber-input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--panel-border);
+    color: var(--text-primary);
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cyber-select:hover,
+.cyber-input:hover {
+    border-color: rgba(124, 58, 237, 0.3);
+}
+
+.cyber-select:focus,
+.cyber-input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
+    outline: none;
+}
+
+/* --- Buttons --- */
+.cyber-btn {
+    position: relative;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, #60a5fa 100%);
+    border: none;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cyber-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+    filter: brightness(1.1);
+}
+
+.cyber-btn:active {
+    transform: translateY(0);
+}
+
+.icon-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* --- Right Panel Components --- */
 .panel-section {
     flex: 1;
     display: flex;
