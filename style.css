@@ -157,6 +157,8 @@ body {
     background: var(--code-bg);
     overflow: hidden;
     padding: 1rem;
+    min-height: 0;
+    /* Critical for flex shrinking */
 }
 
 .code-input {
@@ -370,12 +372,20 @@ body {
 /* Right Panel (Stack & Tree) */
 .right-panel {
     border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .panel-section {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+
+.half-height {
+    flex: 1;
+    min-height: 0;
 }
 
 .stack-list,
@@ -394,10 +404,9 @@ body {
 
 .tree-viz {
     display: block;
-    /* SVG container */
-    flex-direction: row;
-    min-width: 100%;
-    min-height: 100%;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
 }
 
 .stack-frame {
