@@ -124,22 +124,40 @@ class RecursionTreeVisualizer {
         const height = (maxY - minY) + (padding * 2);
 
         // SVG Container
+        console.log(`[TreeViz] Nodes: ${this.nodes.size}, MinX: ${minX}, MaxX: ${maxX}, MinY: ${minY}, MaxY: ${maxY}`);
+
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
         // Force dimensions
-        // Force dimensions
-        svg.style.width = `${Math.max(width, this.container.clientWidth)}px`;
-        svg.style.height = `${Math.max(height, this.container.clientHeight)}px`;
-        // Remove 100% constraints that might shrink it
+        const finalWidth = Math.max(width, this.container.clientWidth || 500);
+        const finalHeight = Math.max(height, this.container.clientHeight || 500);
+
+        console.log(`[TreeViz] Container Size: ${this.container.clientWidth}x${this.container.clientHeight}`);
+        console.log(`[TreeViz] SVG Size: ${finalWidth}x${finalHeight}`);
+
+        svg.style.width = `${finalWidth}px`;
+        svg.style.height = `${finalHeight}px`;
         svg.style.minWidth = `${width}px`;
         svg.style.minHeight = `${height}px`;
         svg.style.display = "block";
+        svg.style.background = "rgba(20, 30, 50, 0.5)"; // Debug background
 
         // Center content if it's smaller than container
         // ViewBox is strictly content
         svg.setAttribute("viewBox", `${minX - padding} ${minY - padding} ${width} ${height}`);
 
         this.container.appendChild(svg);
+
+        // Debug Border
+        const debugRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        debugRect.setAttribute("x", minX - padding);
+        debugRect.setAttribute("y", minY - padding);
+        debugRect.setAttribute("width", width);
+        debugRect.setAttribute("height", height);
+        debugRect.setAttribute("fill", "none");
+        debugRect.setAttribute("stroke", "red");
+        debugRect.setAttribute("stroke-width", "5");
+        svg.appendChild(debugRect);
 
         // Draw Links
         this.nodes.forEach(node => {
