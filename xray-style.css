@@ -187,6 +187,77 @@ body {
     overflow: hidden;
 }
 
+.vis-3d-stage {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: all;
+}
+
+/* --- HUD / Overlay --- */
+.hud-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    z-index: 20;
+}
+
+.professor-panel {
+    align-self: flex-start;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    max-width: 450px;
+    border-left: 3px solid var(--accent-secondary);
+    background: rgba(5, 5, 16, 0.85);
+    /* Dark terminal bg */
+    pointer-events: auto;
+    margin-top: 1rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.typing-container {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.system-prefix {
+    color: var(--accent-secondary);
+    font-weight: bold;
+    margin-right: 0.75rem;
+    text-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+}
+
+.step-title {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.05);
+    /* Very subtle */
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    text-transform: uppercase;
+    user-select: none;
+    z-index: 10;
+}
+
 /* --- Buttons --- */
 .cyber-btn {
     position: relative;
