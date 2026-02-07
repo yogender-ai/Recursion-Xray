@@ -151,8 +151,10 @@ button:hover {
     /* Scroll the whole panel (X and Y) */
     display: block;
     /* Stack children normally */
-    max-height: 100vh;
-    /* Ensure it doesn't grow infinitely */
+    height: 100%;
+    /* Fill the grid area */
+    max-height: none;
+    /* Remove conflicting constraint */
 }
 
 /* Remove internal scrolling constraints */

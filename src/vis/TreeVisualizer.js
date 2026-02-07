@@ -59,11 +59,11 @@ class RecursionTreeVisualizer {
 
     // Simple layout algorithm
     calculateLayout(node, depth) {
-        const NODE_SIZE = 50;
-        const GAP_X = 70; // Significantly increased gap for breadth
-        const LEVEL_HEIGHT = 120; // Increased level height
+        const NODE_SIZE = 30; // Reduced from 50
+        const GAP_X = 20; // Reduced from 70
+        const LEVEL_HEIGHT = 80; // Reduced from 120
 
-        node.y = depth * LEVEL_HEIGHT + 60; // Top padding
+        node.y = depth * LEVEL_HEIGHT + 40; // Top padding
 
         if (node.children.length === 0) {
             node.width = NODE_SIZE;
@@ -87,11 +87,11 @@ class RecursionTreeVisualizer {
         // Actually, Reingold-Tilford is hard.
         // Let's do a simple "next available x" traversal for leaves.
 
-        let currentX = 60; // Left padding
+        let currentX = 40; // Left padding
         const positionLeaves = (node) => {
             if (node.children.length === 0) {
                 node.x = currentX;
-                currentX += 120; // Node width (50) + gap (70)
+                currentX += 50; // Node width (30) + gap (20)
             } else {
                 node.children.forEach(positionLeaves);
                 // Parent is centered above children
@@ -192,7 +192,7 @@ class RecursionTreeVisualizer {
             g.style.opacity = "0.1"; // Start hidden/faint
 
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("r", "20");
+            circle.setAttribute("r", "12"); // Reduced from 20
             circle.setAttribute("fill", "#ffffff");
             circle.setAttribute("stroke", "#94a3b8");
             circle.setAttribute("stroke-width", "2");
@@ -201,8 +201,8 @@ class RecursionTreeVisualizer {
             // Text (Args)
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("text-anchor", "middle");
-            text.setAttribute("dy", "5");
-            text.setAttribute("font-size", "10px");
+            text.setAttribute("dy", "3"); // Adjusted for smaller circle
+            text.setAttribute("font-size", "8px"); // Reduced from 10px
             text.setAttribute("fill", "#334155");
 
             // Format simple args
