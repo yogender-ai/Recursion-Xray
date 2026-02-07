@@ -140,13 +140,15 @@ function updateVisuals(index) {
     const elFinalResult = document.getElementById('finalResultPanel');
     const elFinalValue = document.getElementById('finalResultValue');
 
-    // Only show final result if we are at the end OR if it's the last return
-    // AND it's a root return.
-    if (event.type === 'RETURN' && event.data.frame.depth === 0) {
-        elFinalResult.classList.remove('hidden');
-        elFinalValue.textContent = JSON.stringify(event.data.returnValue);
-    } else if (index === 0) {
-        elFinalResult.classList.add('hidden');
+    if (elFinalResult && elFinalValue) {
+        // Only show final result if we are at the end OR if it's the last return
+        // AND it's a root return.
+        if (event.type === 'RETURN' && event.data.frame.depth === 0) {
+            elFinalResult.classList.remove('hidden');
+            elFinalValue.textContent = JSON.stringify(event.data.returnValue);
+        } else if (index === 0) {
+            elFinalResult.classList.add('hidden');
+        }
     }
 
     // Code Highlight
@@ -372,7 +374,9 @@ document.getElementById('btnRun').addEventListener('click', async () => {
 
     } else if (algo.inputType === "string") {
         const paramName = algo.params[0];
-        driverCode += `string ${paramName} = "${inputVal}";\n`;
+        // Strip existing quotes if user typed them, then wrap in quotes
+        const cleanInput = inputVal.replace(/^"|"$/g, '');
+        driverCode += `string ${paramName} = "${cleanInput}";\n`;
         driverCode += `${rootFn}(${paramName});`;
 
     } else if (algo.inputType === "multi-number") {

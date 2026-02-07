@@ -77,6 +77,22 @@ class CppTranspiler {
         jsCode = jsCode.replace(/\.pop_back\(/g, '.pop(');
         jsCode = jsCode.replace(/\.size\(\)/g, '.length');
 
+        // New: Handle Initialization Lists {1, 2, 3} -> [1, 2, 3]
+        // This is tricky because {} is also for blocks.
+        // We target assignments: = { ... }; or return { ... };
+        // Or in params: func({ ... })
+        jsCode = jsCode.replace(/=\s*\{(.*?)\};/g, ' = [$1];');
+        jsCode = jsCode.replace(/return\s*\{(.*?)\};/g, 'return [$1];');
+        // Handle params? func(arg, { ... }) -> func(arg, [ ... ])
+        // This regex is slightly dangerous but works for our simple cases:
+        jsCode = jsCode.replace(/,\s*\{(.*?)\}/g, ', [$1]');
+        jsCode = jsCode.replace(/\(\{(.*?)\}/g, '([$1]'); // First arg
+
+        // New: Remove Forward Declarations
+        // Pattern: Type Name(Args);
+        // regex: (void|int|bool|string|vector<...>) name (...);
+        jsCode = jsCode.replace(/(?:void|int|bool|string|vector\s*<.*?>)\s+\w+\s*\(.*?\);/g, '');
+
         // 7. Line Stepper (Simple)
         const lines = jsCode.split('\n');
         const instrumentedLines = lines.map((line, idx) => {
