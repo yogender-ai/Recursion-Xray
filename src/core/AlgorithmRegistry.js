@@ -14,6 +14,7 @@ const ALGORITHM_REGISTRY = {
                 defaultInput: "5",
                 inputType: "number",
                 params: ["n"],
+                rootFn: "factorial",
                 code: `int factorial(int n) {
     if (n <= 1) return 1;
     return n * factorial(n - 1);
@@ -28,6 +29,7 @@ factorial(n);`
                 defaultInput: "1, 2, 3, 4, 5",
                 inputType: "array",
                 params: ["arr", "n"],
+                rootFn: "sumArray",
                 code: `int sumArray(vector<int> arr, int n) {
     if (n <= 0) return 0;
     return sumArray(arr, n - 1) + arr[n - 1];
@@ -42,6 +44,7 @@ sumArray(arr, arr.size());`
                 defaultInput: "\"hello\"",
                 inputType: "string",
                 params: ["s"],
+                rootFn: "reverseString",
                 code: `string reverseString(string s) {
     if (s.length() == 0) return "";
     return reverseString(s.substr(1)) + s[0];
@@ -64,6 +67,7 @@ reverseString(s);`
                 defaultInput: "5",
                 inputType: "number",
                 params: ["n"],
+                rootFn: "fib",
                 code: `int fib(int n) {
     if (n <= 1) return n;
     return fib(n - 1) + fib(n - 2);
@@ -77,7 +81,9 @@ fib(n);`
                 name: "Merge Sort (Divide & Conquer)",
                 defaultInput: "38, 27, 43, 3, 9, 82, 10",
                 inputType: "array",
-                params: ["arr", "l", "r"],
+                params: ["arr"],
+                extraArgs: ["0", "arr.size() - 1"],
+                rootFn: "mergeSort",
                 code: `void merge(vector<int>& arr, int l, int m, int r) {
     // Merge logic simplified for visualization focus
     // In actual C++, this would be complex. 
@@ -109,6 +115,8 @@ mergeSort(arr, 0, arr.size() - 1);`
                 defaultInput: "1, 2, 3",
                 inputType: "array",
                 params: ["nums"],
+                extraArgs: ["{}", "{}"], // curr, visited
+                rootFn: "permute",
                 code: `void permute(vector<int> nums, vector<int> curr, vector<bool> visited) {
     if (curr.size() == nums.size()) {
         cout << "Found: " << curr; 
@@ -138,6 +146,8 @@ permute(nums, {}, visited);`
                 defaultInput: "1, 2, 3",
                 inputType: "array",
                 params: ["nums"],
+                extraArgs: ["{}", "0"], // curr, index
+                rootFn: "subsets",
                 code: `void subsets(vector<int> nums, vector<int> curr, int index) {
     cout << "Subset: " << curr;
     
@@ -165,6 +175,7 @@ subsets(nums, {}, 0);`
                 defaultInput: "5",
                 inputType: "number",
                 params: ["n"],
+                rootFn: "tailFactorial",
                 code: `int tailFactorial(int n, int accumulator) {
     if (n == 0) return accumulator;
     return tailFactorial(n - 1, n * accumulator);
@@ -187,6 +198,7 @@ tailFactorial(n, 1);`
                 defaultInput: "5",
                 inputType: "number",
                 params: ["n"],
+                rootFn: "isEven",
                 code: `bool isEven(int n);
 bool isOdd(int n);
 
@@ -217,6 +229,7 @@ isEven(n);`
                 defaultInput: "2, 1",
                 inputType: "multi-number",
                 params: ["m", "n"],
+                rootFn: "ackermann",
                 code: `int ackermann(int m, int n) {
     if (m == 0) return n + 1;
     if (m > 0 && n == 0) return ackermann(m - 1, 1);

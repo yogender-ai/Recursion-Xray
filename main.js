@@ -284,6 +284,128 @@ elAlgoSelect.addEventListener('change', (e) => {
     elStepDesc.textContent = category.description;
 });
 
+// Update Run Button to use Dynamic Inputs
+document.getElementById('btnRun').addEventListener('click', async () => {
+    // 1. Get Code
+    const rawCpp = elEditor.value;
+
+    // 2. Get Inputs
+    const [catKey, algoKey] = elAlgoSelect.value.split(':');
+    const algo = ALGORITHM_REGISTRY[catKey].algorithms[algoKey];
+
+    // Parse Input String "1, 2, 3" -> "vector<int> nums = {1,2,3};"
+    const inputVal = elAlgoInput.value;
+    let driverCode = "";
+    const rootFn = algo.rootFn; // Use explicit root function name
+
+    if (algo.inputType === "array") {
+        // Assume first param is array
+        // e.g. "1, 2, 3" -> vector<int> arr = {1, 2, 3};
+        const arrName = algo.params[0];
+        driverCode += `vector<int> ${arrName} = {${inputVal}};\n`;
+
+        // If 2nd param is size (n), generate it
+        if (algo.params.length > 1 && algo.params[1] === 'n') {
+            driverCode += `int n = ${arrName}.size();\n`;
+        }
+
+        // Call: sumArray(arr, n) or mergeSort(arr, 0, size-1)
+        const args = [...algo.params, ...(algo.extraArgs || [])].join(', ');
+        driverCode += `${rootFn}(${args});`;
+
+    } else if (algo.inputType === "number") {
+        const paramName = algo.params[0];
+        driverCode += `int ${paramName} = ${inputVal};\n`;
+        driverCode += `${rootFn}(${paramName});`;
+
+    } else if (algo.inputType === "string") {
+        const paramName = algo.params[0];
+        driverCode += `string ${paramName} = "${inputVal}";\n`;
+        driverCode += `${rootFn}(${paramName});`;
+
+    } else if (algo.inputType === "multi-number") {
+        // e.g. "2, 1" -> m=2, n=1
+        const parts = inputVal.split(',').map(x => x.trim());
+        algo.params.forEach((p, i) => {
+            driverCode += `int ${p} = ${parts[i] || 0};\n`; // Default 0
+        });
+        driverCode += `${rootFn}(${algo.params.join(', ')});`;
+    }
+
+    // Inject Driver Code
+    const driverSplit = rawCpp.split('// Driver');
+    let finalCpp = rawCpp;
+
+    if (driverSplit.length > 1) {
+        // Re-generate driver from Input Box
+        finalCpp = driverSplit[0] + "\n// Driver\n" + driverCode;
+        console.log("Injected Driver Code:", driverCode);
+    } else {
+        // Append if not found
+        finalCpp = rawCpp + "\n\n// Driver\n" + driverCode;
+    }
+
+    // UI Feedback
+    elStepDesc.textContent = "Compiling Neural Link...";
+    // ... rest of run logic using finalCpp
+
+    await runSimulation(finalCpp);
+});
+
+async function runSimulation(rawCpp) {
+    // Extracted run logic for reuse
+    try {
+        await new Promise(r => setTimeout(r, 600)); // Delay
+
+        const jsCode = transpiler.transpile(rawCpp);
+        console.log("Transpiled JS:\n", jsCode);
+
+        // Reset All Visuals
+        tracer.reset();
+        stackVis.reset();
+        sceneManager.clear();
+        treeVis.reset([]);
+        timeline = [];
+        currentIndex = 0;
+
+        // Execute Code
+        const wrappedCode = `
+            (async () => {
+                try {
+                    ${jsCode}
+                    if (typeof main === 'function') { await main(); }
+                } catch (e) {
+                    console.error("Runtime Error:", e);
+                    throw e; 
+                }
+            })()
+        `;
+
+        await eval(wrappedCode);
+
+        // Post-Run Analysis
+        timeline = tracer.getTimeline();
+
+        treeVis.reset(timeline);
+
+        if (timeline.length > 0) {
+            elSlider.max = timeline.length - 1;
+            elSlider.value = 0;
+            updateVisuals(0);
+            elStepDesc.textContent = "Execution Complete.";
+            elStepTitle.textContent = "READY";
+        } else {
+            elStepDesc.textContent = "No Recursion Detected.";
+            elStepTitle.textContent = "DONE";
+        }
+
+    } catch (e) {
+        console.error("Compilation/Runtime Error:", e);
+        elStepDesc.textContent = "Error: " + e.message;
+        elStepTitle.textContent = "ERROR";
+    }
+}
+
 // Init
 populateAlgoDropdown();
 // Select Factorial by default
