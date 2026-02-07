@@ -35,67 +35,7 @@ function animate() {
 animate();
 
 // --- Controls ---
-document.getElementById('btnRun').addEventListener('click', async () => {
-    const rawCpp = elEditor.value;
-
-    // UI Feedback
-    elStepDesc.textContent = "Compiling Neural Link...";
-    elStepTitle.textContent = "COMPILING";
-
-    try {
-        // Dramatic delay
-        await new Promise(r => setTimeout(r, 600));
-
-        const jsCode = transpiler.transpile(rawCpp);
-        console.log("Transpiled JS:\n", jsCode);
-
-        // Reset All Visuals
-        tracer.reset();
-        stackVis.reset(); // Fix: Clear 3D meshes
-        sceneManager.clear();
-        treeVis.reset([]);
-        timeline = [];
-        currentIndex = 0;
-
-        // Execute Code
-        const wrappedCode = `
-            (async () => {
-                try {
-                    ${jsCode}
-                    if (typeof main === 'function') { await main(); }
-                } catch (e) {
-                    console.error("Runtime Error:", e);
-                    throw e; 
-                }
-            })()
-        `;
-
-        await eval(wrappedCode);
-
-        // Post-Run Analysis
-        timeline = tracer.getTimeline();
-        console.log("Timeline Generated:", timeline);
-
-        // Re-init Tree with full timeline (for layout calculation)
-        treeVis.reset(timeline);
-
-        if (timeline.length > 0) {
-            elSlider.max = timeline.length - 1;
-            elSlider.value = 0;
-            updateVisuals(0);
-            elStepDesc.textContent = "Execution Complete. Standby.";
-            elStepTitle.textContent = "READY";
-        } else {
-            elStepDesc.textContent = "No Recursion Detected.";
-            elStepTitle.textContent = "DONE";
-        }
-
-    } catch (e) {
-        console.error("Compilation/Runtime Error:", e);
-        elStepDesc.textContent = "Error: " + e.message;
-        elStepTitle.textContent = "ERROR";
-    }
-});
+// btnRun listener replaced below with dynamic logic
 
 // Slider Control
 elSlider.addEventListener('input', (e) => {
@@ -302,5 +242,53 @@ document.getElementById('btnTheme').addEventListener('click', () => {
 });
 
 // --- Initial Setup ---
+
+// Populate Dropdown from Registry
+const elAlgoSelect = document.getElementById('algoSelect');
+const elAlgoInput = document.getElementById('algoInput');
+
+function populateAlgoDropdown() {
+    elAlgoSelect.innerHTML = '<option value="" disabled selected>Select Recursion Type...</option>';
+
+    Object.keys(ALGORITHM_REGISTRY).forEach(categoryKey => {
+        const category = ALGORITHM_REGISTRY[categoryKey];
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = category.name; // e.g., "Linear Recursion"
+
+        Object.keys(category.algorithms).forEach(algoKey => {
+            const algo = category.algorithms[algoKey];
+            const option = document.createElement('option');
+            option.value = `${categoryKey}:${algoKey}`; // Store cat:algo
+            option.textContent = algo.name;
+            optgroup.appendChild(option);
+        });
+
+        elAlgoSelect.appendChild(optgroup);
+    });
+}
+
+// Handle Selection
+elAlgoSelect.addEventListener('change', (e) => {
+    const [catKey, algoKey] = e.target.value.split(':');
+    const algo = ALGORITHM_REGISTRY[catKey].algorithms[algoKey];
+    const category = ALGORITHM_REGISTRY[catKey];
+
+    // Update Editor
+    elEditor.value = algo.code;
+
+    // Update Inputs
+    elAlgoInput.value = algo.defaultInput;
+
+    // Educational Overlay
+    elStepTitle.textContent = category.name.toUpperCase();
+    elStepDesc.textContent = category.description;
+});
+
+// Init
+populateAlgoDropdown();
+// Select Factorial by default
+elAlgoSelect.value = "linear:factorial";
+elAlgoSelect.dispatchEvent(new Event('change'));
+
 // Focus editor
 elEditor.focus();

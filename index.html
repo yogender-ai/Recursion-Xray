@@ -69,8 +69,8 @@ permute(nums, [], visited);
                 <div class="control-panel">
                     <div class="select-wrapper">
                         <select id="algoSelect" class="cyber-select">
-                            <option value="permutations">Permutations (Backtracking)</option>
-                            <option value="factorial">Factorial (Simple)</option>
+                            <!-- Populated dynamically by main.js from Registry -->
+                            <option value="" disabled selected>Select Algorithm...</option>
                         </select>
                     </div>
                     <input type="text" id="algoInput" class="cyber-input" value="1,2,3"
@@ -156,6 +156,7 @@ permute(nums, [], visited);
     <script src="src/core/StackFrame.js"></script>
     <script src="src/core/RecursionTracer.js"></script>
     <script src="src/core/CppTranspiler.js"></script>
+    <script src="src/core/AlgorithmRegistry.js"></script>
     <script src="src/vis3d/SceneManager.js"></script>
     <script src="src/vis3d/StackVisualizer3D.js"></script>
     <script src="src/vis/TreeVisualizer.js"></script>
