@@ -52,6 +52,7 @@ class StackVisualizer3D {
     }
 
     createFrame(id, frameData, depth) {
+        console.log(`[StackViz3D] Creating Frame ${id} at depth ${depth}`, frameData);
         // Create a Plane
         const geometry = new THREE.PlaneGeometry(4, 3);
         const texture = this.createTexture(frameData);
@@ -60,7 +61,7 @@ class StackVisualizer3D {
             transparent: true,
             opacity: 0.9,
             side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending,
+            blending: THREE.NormalBlending, // Changed from Additive to Normal for better visibility
             depthWrite: false
         });
 
@@ -72,6 +73,7 @@ class StackVisualizer3D {
 
         this.frames.set(id, mesh);
         this.sceneManager.addStackFrame(mesh);
+        console.log(`[StackViz3D] Frame added to scene. Total frames: ${this.frames.size}`);
     }
 
     createTexture(frameData) {
