@@ -178,9 +178,13 @@ button:hover {
 }
 
 /* Layout Override */
-.xray-container {
+.main-content {
+    display: grid;
     grid-template-columns: 25% 1fr 25%;
     /* Fixed 25% Sidebars */
+    height: calc(100vh - 80px - 80px);
+    /* Adjust for header/footer */
+    overflow: hidden;
 }
 
 /* Compile & Run Button */
