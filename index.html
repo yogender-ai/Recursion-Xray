@@ -65,7 +65,22 @@ permute(nums, [], visited);
         </div>
     </div>
 
-    <script type="module" src="main.js"></script>
+    <!-- Scripts (Order Matters) -->
+    <!-- 1. Three.js via CDN -->
+    <!-- 1. Three.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- 2. Core Modules (No 'type=module' needed now) -->
+    <script src="src/core/TraceEvent.js"></script>
+    <script src="src/core/StackFrame.js"></script>
+    <script src="src/core/RecursionTracer.js"></script>
+    <script src="src/core/CppTranspiler.js"></script>
+    <script src="src/vis3d/SceneManager.js"></script>
+    <script src="src/vis3d/StackVisualizer3D.js"></script>
+
+    <!-- 3. Main Logic -->
+    <script src="main.js"></script>
 </body>
 
 </html>

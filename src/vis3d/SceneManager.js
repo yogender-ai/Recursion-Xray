@@ -16,9 +16,16 @@ class SceneManager {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.container.appendChild(this.renderer.domElement);
 
-        this.lights = [];
         this.initLights();
         this.initStarfield();
+
+        // OrbitControls
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.05;
+        this.controls.screenSpacePanning = false;
+        this.controls.minDistance = 5;
+        this.controls.maxDistance = 100;
 
         // Layers
         this.stackGroup = new THREE.Group();
@@ -32,19 +39,24 @@ class SceneManager {
     }
 
     initLights() {
-        // Ambient
-        const ambi = new THREE.AmbientLight(0x4040a0, 0.5);
+        // Ambient - slightly brighter/blue for cyber feel
+        const ambi = new THREE.AmbientLight(0x2a2a40, 0.6);
         this.scene.add(ambi);
 
-        // Point Light (The "Core")
-        const point = new THREE.PointLight(0x3b82f6, 2, 100);
-        point.position.set(0, 10, 10);
+        // Point Light (The "Core") - Intense Blue
+        const point = new THREE.PointLight(0x00f3ff, 2.5, 100);
+        point.position.set(5, 15, 15);
         this.scene.add(point);
 
-        // Purple rim light
-        const rim = new THREE.DirectionalLight(0xa855f7, 1);
-        rim.position.set(-10, 5, -10);
+        // Rim Light - Neon Purple/Pink from behind
+        const rim = new THREE.DirectionalLight(0xff00ff, 1.5);
+        rim.position.set(-10, 10, -20);
         this.scene.add(rim);
+
+        // Fill Light - Soft Cyan
+        const fill = new THREE.DirectionalLight(0x00ffff, 0.5);
+        fill.position.set(20, 0, 10);
+        this.scene.add(fill);
     }
 
     initStarfield() {

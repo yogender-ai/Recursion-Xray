@@ -1,7 +1,5 @@
-import { SceneManager } from './src/vis3d/SceneManager.js';
-import { StackVisualizer3D } from './src/vis3d/StackVisualizer3D.js';
-import { RecursionTracer } from './src/core/RecursionTracer.js';
-import { CppTranspiler } from './src/core/CppTranspiler.js';
+// Main Entry Point
+// Assumes all dependencies (SceneManager, CppTranspiler, etc.) are loaded globally via <script> tags.
 
 // --- State ---
 const sceneManager = new SceneManager('visContainer');
@@ -42,20 +40,16 @@ document.getElementById('btnRun').addEventListener('click', async () => {
         currentIndex = 0;
 
         // Execute
-        // We wrap in an async function to allow await
         const wrappedCode = `
             (async () => {
                 try {
                     ${jsCode}
                     
-                    // Attempt to auto-call main if it exists
                     if (typeof main === 'function') { await main(); }
 
-                    // Assuming functionality like 'permute' might be called globally in the user script
-                    // The default example has global code at the bottom.
                 } catch (e) {
                     console.error("Runtime Error:", e);
-                    throw e; // Re-throw to be caught by outer catch
+                    throw e; 
                 }
             })()
         `;
@@ -135,7 +129,4 @@ function updateVisuals(index) {
     const slider = document.getElementById('slider');
     slider.max = timeline.length - 1;
     slider.value = index;
-
-    // Highlight Code Line
-    // (If we had a way to map lines back to editor)
 }

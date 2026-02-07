@@ -1,6 +1,6 @@
-import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+// Depends on THREE (loaded globally)
 
-export class StackVisualizer3D {
+class StackVisualizer3D {
     constructor(sceneManager) {
         this.sceneManager = sceneManager;
         this.frames = new Map(); // frameId -> Mesh
@@ -69,9 +69,6 @@ export class StackVisualizer3D {
         // Position
         // Z moves negative into screen
         mesh.position.set(0, 0, -depth * this.spacing);
-
-        // Animation (Simulated via simple placement for now)
-        // Ideally use GSAP here
 
         this.frames.set(id, mesh);
         this.sceneManager.addStackFrame(mesh);
