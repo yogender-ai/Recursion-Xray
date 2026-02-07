@@ -126,6 +126,15 @@ document.getElementById('btnPrev').addEventListener('click', () => {
     }
 });
 
+// Zoom Controls
+document.getElementById('btnZoomIn').addEventListener('click', () => {
+    treeVis.zoomIn();
+});
+
+document.getElementById('btnZoomOut').addEventListener('click', () => {
+    treeVis.zoomOut();
+});
+
 // Play/Pause
 document.getElementById('btnPlayPause').addEventListener('click', togglePlay);
 
