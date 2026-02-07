@@ -290,41 +290,32 @@ elEditor.addEventListener('scroll', () => {
     if (currentLineNum) highlightLine(currentLineNum);
 });
 
-// Theme Toggle
-document.getElementById('btnTheme').addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-});
-
 // Presentation Mode Toggle
 const btnPresent = document.getElementById('btnPresent');
-// Create Exit Button dynamically if not in HTML
-let btnExitPresent = document.getElementById('btnExitPresent');
-if (!btnExitPresent) {
-    btnExitPresent = document.createElement('button');
-    btnExitPresent.id = 'btnExitPresent';
-    btnExitPresent.textContent = '❌ EXIT PRESENTATION';
-    btnExitPresent.style.display = 'none'; // Managed by CSS
-    document.body.appendChild(btnExitPresent);
-}
+const btnExitPresent = document.getElementById('btnExitPresent');
 
 function togglePresentation() {
     document.body.classList.toggle('presentation-mode');
 
     // Resize Scene because grid changed
-    // Wait for transition?
     setTimeout(() => {
-        // Trigger resize on SceneManager
-        // We need to access the container via the observer or manually call resize
-        // The ResizeObserver in SceneManager should handle it!
+        // Trigger resize on SceneManager if needed
+        if (window.sceneManager) {
+            const container = document.getElementById('vis3d');
+            if (container) {
+                window.sceneManager.onResize(container.getBoundingClientRect());
+            }
+        }
     }, 550);
 }
 
-btnPresent.addEventListener('click', togglePresentation);
-btnExitPresent.addEventListener('click', togglePresentation);
+if (btnPresent) btnPresent.addEventListener('click', togglePresentation);
+if (btnExitPresent) btnExitPresent.addEventListener('click', togglePresentation);
 
-// --- Initial Setup ---
+// Controls
+// btnRun listener replaced below with dynamic logic
 
-// Populate Dropdown from Registry
+// Slider Control
 const elAlgoSelect = document.getElementById('algoSelect');
 const elAlgoInput = document.getElementById('algoInput');
 
