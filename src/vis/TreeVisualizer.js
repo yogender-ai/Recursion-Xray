@@ -60,21 +60,20 @@ class RecursionTreeVisualizer {
     // Simple layout algorithm
     calculateLayout(node, depth) {
         const NODE_SIZE = 50;
-        const GAP_X = 40; // Increased gap
-        const LEVEL_HEIGHT = 100; // Increased level height
+        const GAP_X = 70; // Significantly increased gap for breadth
+        const LEVEL_HEIGHT = 120; // Increased level height
 
-        node.y = depth * LEVEL_HEIGHT + 40; // Top padding
+        node.y = depth * LEVEL_HEIGHT + 60; // Top padding
 
         if (node.children.length === 0) {
             node.width = NODE_SIZE;
-            // Leaf node: x will be assigned by parent or accumulation
         } else {
             let totalWidth = 0;
             node.children.forEach(child => {
                 this.calculateLayout(child, depth + 1);
                 totalWidth += child.width + GAP_X;
             });
-            totalWidth -= GAP_X; // Remove last gap
+            totalWidth -= GAP_X;
             node.width = totalWidth;
         }
     }
@@ -88,11 +87,11 @@ class RecursionTreeVisualizer {
         // Actually, Reingold-Tilford is hard.
         // Let's do a simple "next available x" traversal for leaves.
 
-        let currentX = 40; // Left padding
+        let currentX = 60; // Left padding
         const positionLeaves = (node) => {
             if (node.children.length === 0) {
                 node.x = currentX;
-                currentX += 90; // Node width (50) + gap (40)
+                currentX += 120; // Node width (50) + gap (70)
             } else {
                 node.children.forEach(positionLeaves);
                 // Parent is centered above children
@@ -120,20 +119,22 @@ class RecursionTreeVisualizer {
         });
 
         // Add Padding
-        const padding = 50;
+        const padding = 100; // Generous padding
         const width = (maxX - minX) + (padding * 2);
         const height = (maxY - minY) + (padding * 2);
 
         // SVG Container
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-        // IMPORTANT: Set explicit pixel size to force scrolling in parent div
-        svg.style.width = `${width}px`;
-        svg.style.height = `${height}px`;
-        svg.style.display = "block"; // Remove descender gap
+        // Force dimensions
+        svg.style.width = `${Math.max(width, this.container.clientWidth)}px`;
+        svg.style.height = `${Math.max(height, this.container.clientHeight)}px`;
+        svg.style.minWidth = "100%";
+        svg.style.minHeight = "100%";
+        svg.style.display = "block";
 
-        // ViewBox matches the coordinate system (handling minX offset if needed)
-        // We shift everything by -minX + padding to ensure it starts at padding
+        // Center content if it's smaller than container
+        // ViewBox is strictly content
         svg.setAttribute("viewBox", `${minX - padding} ${minY - padding} ${width} ${height}`);
 
         this.container.appendChild(svg);

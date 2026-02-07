@@ -82,7 +82,7 @@ body {
 .main-content {
     flex: 1;
     display: grid;
-    grid-template-columns: 400px 1fr 350px;
+    grid-template-columns: 380px 1fr 500px;
     /* Sidebar, 3D, Info */
     overflow: hidden;
 }
