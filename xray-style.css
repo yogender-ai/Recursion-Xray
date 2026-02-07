@@ -101,6 +101,9 @@ body {
     color: var(--neon-purple);
     text-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
     pointer-events: none;
+    z-index: 10;
+    text-align: center;
+    min-width: 300px;
 }
 
 /* Bottom Controls */
