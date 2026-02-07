@@ -51,6 +51,7 @@ document.getElementById('btnRun').addEventListener('click', async () => {
 
         // Reset All Visuals
         tracer.reset();
+        stackVis.reset(); // Fix: Clear 3D meshes
         sceneManager.clear();
         treeVis.reset([]);
         timeline = [];
