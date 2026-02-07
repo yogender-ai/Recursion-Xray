@@ -64,7 +64,8 @@ class CppTranspiler {
         jsCode = jsCode.replace(/return\s*(.*?);/g, (match, retVal) => {
             let val = retVal.trim();
             if (!val) val = 'undefined';
-            return `tracer.return(${val}, 0); return ${val};`;
+            // Wrap in block to ensure it stays inside if-statements without braces
+            return `{ tracer.return(${val}, 0); return ${val}; }`;
         });
 
         // 5. Variable Declarations
