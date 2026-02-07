@@ -95,21 +95,7 @@ permute(nums, [], visited);
                     <div id="stepTitle" class="step-title">INITIALIZED</div>
                 </div>
 
-                <!-- Floating Timeline -->
-                <div class="timeline-dock glass-panel">
-                    <div class="playback-controls">
-                        <button id="btnPrev" class="ctrl-btn">⏮</button>
-                        <button id="btnPlayPause" class="ctrl-btn play-btn">▶</button>
-                        <button id="btnNext" class="ctrl-btn">⏭</button>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" id="progressSlider" min="0" max="100" value="0" class="cyber-slider">
-                    </div>
-                    <div class="speed-control">
-                        <span>SPEED</span>
-                        <input type="range" id="speedSlider" min="100" max="2000" value="1000" class="mini-slider">
-                    </div>
-                </div>
+                <!-- Timeline Moved to Footer -->
             </main>
 
             <!-- RIGHT: Data Viz (Stack & Tree) -->
@@ -132,6 +118,26 @@ permute(nums, [], visited);
                 </div>
             </aside>
         </div>
+
+        <!-- FOOTER: Timeline & Controls -->
+        <footer class="cyber-footer glass-panel">
+            <div class="timeline-controls">
+                <div class="playback-controls">
+                    <button id="btnPrev" class="ctrl-btn">⏮</button>
+                    <button id="btnPlayPause" class="ctrl-btn play-btn">▶</button>
+                    <button id="btnNext" class="ctrl-btn">⏭</button>
+                </div>
+
+                <div class="slider-container">
+                    <input type="range" id="progressSlider" min="0" max="100" value="0" class="cyber-slider">
+                </div>
+
+                <div class="speed-control">
+                    <span>SPEED</span>
+                    <input type="range" id="speedSlider" min="100" max="2000" value="1000" class="mini-slider">
+                </div>
+            </div>
+        </footer>
     </div>
 
     <!-- Scripts (Order Matters) -->
