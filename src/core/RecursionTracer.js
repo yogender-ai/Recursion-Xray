@@ -1,7 +1,6 @@
-import { TraceEvent } from './TraceEvent.js';
-import { StackFrame } from './StackFrame.js';
+// Depends on TraceEvent, StackFrame (loaded globally)
 
-export class RecursionTracer {
+class RecursionTracer {
     constructor() {
         this.events = [];
         this.stack = [];
@@ -44,8 +43,6 @@ export class RecursionTracer {
 
     // Called before every line execution
     registerLine(lineNumber) {
-        // We can try to capture local vars here? 
-        // In the transpiled code, we can modify it to pass `eval('vars')`? No, generic `step` is easier.
         const frameId = this.stack.length > 0 ? this.stack[this.stack.length - 1].id : null;
         if (frameId) {
             this.addEvent('LINE', {}, "Executing line " + lineNumber, lineNumber, frameId);

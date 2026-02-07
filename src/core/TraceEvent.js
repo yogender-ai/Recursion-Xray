@@ -1,4 +1,4 @@
-export class TraceEvent {
+class TraceEvent {
     constructor(type, data, message, lineNumber = null, frameId = null) {
         this.id = crypto.randomUUID();
         this.type = type; // 'CALL', 'RETURN', 'LINE', 'VAR', 'LOG', 'ERROR'

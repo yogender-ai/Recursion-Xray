@@ -1,4 +1,4 @@
-export class StackFrame {
+class StackFrame {
     constructor(id, name, args, parentId = null, depth = 0) {
         this.id = id;
         this.name = name;
