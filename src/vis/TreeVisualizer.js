@@ -1,4 +1,4 @@
-export class RecursionTreeVisualizer {
+class RecursionTreeVisualizer {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
         this.nodes = new Map(); // frameId -> Node
