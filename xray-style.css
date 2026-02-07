@@ -147,20 +147,27 @@ button:hover {
 
 /* Right Panel - Unified Scroll */
 .right-panel {
-    overflow-y: auto;
-    /* Scroll the whole panel */
+    overflow: auto;
+    /* Scroll the whole panel (X and Y) */
     display: block;
     /* Stack children normally */
+    max-height: 100vh;
+    /* Ensure it doesn't grow infinitely */
 }
 
 /* Remove internal scrolling constraints */
 .stack-list,
 .tree-viz {
     overflow: visible;
+    /* Let parent handle scroll */
     flex: none;
     height: auto;
     min-height: 200px;
     /* Minimum size */
+    width: max-content;
+    /* Allow growing horizontally */
+    min-width: 100%;
+    /* But at least full width */
 }
 
 .half-height {
@@ -168,4 +175,22 @@ button:hover {
     height: auto;
     min-height: 0;
     border-bottom: 1px solid var(--border-color);
+}
+
+/* Cyber Inputs & Selects */
+.cyber-select,
+.cyber-input {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--neon-blue);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.cyber-select:focus,
+.cyber-input:focus {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    outline: none;
 }
