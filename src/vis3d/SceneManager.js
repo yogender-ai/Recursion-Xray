@@ -88,6 +88,7 @@ class SceneManager {
 
     render() {
         this.starfield.rotation.y += 0.0005; // Subtle rotation
+        this.controls.update(); // Required for damping
         this.renderer.render(this.scene, this.camera);
     }
 
