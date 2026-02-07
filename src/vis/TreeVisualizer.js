@@ -6,16 +6,108 @@ class RecursionTreeVisualizer {
         this.width = 0;
         this.height = 0;
         this.scale = 1.0;
+        this.translateX = 0;
+        this.translateY = 0;
+        this.isDragging = false;
+        this.startX = 0;
+        this.startY = 0;
         this.mainGroup = null; // Scale group
+
+        this.setupInteractions();
+    }
+
+    setupInteractions() {
+        this.container.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
+        this.container.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+        window.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        window.addEventListener('mouseup', () => this.handleMouseUp());
+    }
+
+    handleWheel(e) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+
+        // Zoom towards mouse pointer
+        const rect = this.container.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+
+        // Calculate world point before zoom
+        const worldX = (offsetX - this.translateX) / this.scale;
+        const worldY = (offsetY - this.translateY) / this.scale;
+
+        // Update Scale
+        const newScale = Math.min(Math.max(this.scale * delta, 0.1), 5.0);
+
+        // Adjust translate to keep world point under mouse
+        this.translateX = offsetX - worldX * newScale;
+        this.translateY = offsetY - worldY * newScale;
+        this.scale = newScale;
+
+        this.updateTransform();
+    }
+
+    handleMouseDown(e) {
+        this.isDragging = true;
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+        this.container.style.cursor = 'grabbing';
+    }
+
+    handleMouseMove(e) {
+        if (!this.isDragging) return;
+        const dx = e.clientX - this.startX;
+        const dy = e.clientY - this.startY;
+
+        this.translateX += dx;
+        this.translateY += dy;
+
+        this.startX = e.clientX;
+        this.startY = e.clientY;
+
+        this.updateTransform();
+    }
+
+    handleMouseUp() {
+        this.isDragging = false;
+        this.container.style.cursor = 'grab';
     }
 
     zoomIn() {
+        // Zoom center
+        const rect = this.container.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        // World point at center
+        const worldX = (centerX - this.translateX) / this.scale;
+        const worldY = (centerY - this.translateY) / this.scale;
+
         this.scale = Math.min(this.scale * 1.2, 5.0);
+
+        // Adjust translate
+        this.translateX = centerX - worldX * this.scale;
+        this.translateY = centerY - worldY * this.scale;
+
         this.updateTransform();
     }
 
     zoomOut() {
+        // Zoom center
+        const rect = this.container.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        // World point at center
+        const worldX = (centerX - this.translateX) / this.scale;
+        const worldY = (centerY - this.translateY) / this.scale;
+
         this.scale = Math.max(this.scale / 1.2, 0.2);
+
+        // Adjust translate
+        this.translateX = centerX - worldX * this.scale;
+        this.translateY = centerY - worldY * this.scale;
+
         this.updateTransform();
     }
 
@@ -23,7 +115,7 @@ class RecursionTreeVisualizer {
         if (this.mainGroup) {
             // Transform origin? Center?
             // Simple scale for now.
-            this.mainGroup.setAttribute("transform", `scale(${this.scale})`);
+            this.mainGroup.setAttribute("transform", `translate(${this.translateX}, ${this.translateY}) scale(${this.scale})`);
 
             // Adjust SVG size to allow scrolling?
             // If we zoom in, the content gets bigger.
@@ -193,18 +285,7 @@ class RecursionTreeVisualizer {
 
         this.container.appendChild(svg);
 
-        // Debug Border
-        const debugRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        debugRect.setAttribute("x", minX - padding);
-        debugRect.setAttribute("y", minY - padding);
-        debugRect.setAttribute("width", width);
-        debugRect.setAttribute("height", height);
-        debugRect.setAttribute("fill", "none");
-        debugRect.setAttribute("stroke", "red");
-        debugRect.setAttribute("stroke-width", "5");
-        svg.appendChild(debugRect);
 
-        svg.appendChild(debugRect);
 
         // Main Scale Group
         this.mainGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
