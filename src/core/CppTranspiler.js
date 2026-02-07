@@ -24,16 +24,35 @@ class CppTranspiler {
         });
 
         // 3. Handle Function Definitions
+        // We need to capture the function body and wrap it correctly.
+        // Regex to match C++ function signatures:
+        // ReturnType FunctionName ( Args ) { Body }
+
+        // This regex is tricky for nested braces. 
+        // Strategy: Iterate through the code, find function headers, then extract block.
+        // BUT for this simplified visualizer, we can assume standard formatting?
+        // Or better: Just replace the header and let the body be.
+
+        // Match: void|int|bool|string|vector<...> name ( ... ) {
         const funcRegex = /(?:void|int|string|bool|vector\s*<.*?>)\s+(\w+)\s*\((.*?)\)\s*\{/g;
 
         jsCode = jsCode.replace(funcRegex, (match, funcName, argsRaw) => {
+            // Parse Args
             let argsList = argsRaw.split(',');
             let cleanArgs = argsList.map(arg => {
                 arg = arg.trim();
                 if (!arg) return '';
+                // "int n" -> "n"
+                // "vector<int> arr" -> "arr"
                 let parts = arg.split(/\s+|&/);
-                return parts[parts.length - 1];
+                return parts[parts.length - 1]; // Last part is var name
             }).filter(x => x).join(', ');
+
+            // Inject Tracer Call at start of function
+            // We use 'async' to allow await if we ever need it (we don't for tracer, but maybe for main)
+            // But wait, our 'main' runs synchronously in the eval?
+            // Actually, we made main async in the wrapper.
+            // Let's keep these regular functions for linear execution speed.
 
             return `
             function ${funcName}(${cleanArgs}) {
