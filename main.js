@@ -162,13 +162,25 @@ function updateVisuals(index) {
     const event = timeline[index];
 
     // 3D Stack Update
-    stackVis.update(index, timeline);
+    try {
+        stackVis.update(index, timeline);
+    } catch (e) {
+        console.error("StackVis3D Error:", e);
+    }
 
     // 2D Stack Update (DOM)
-    render2DStack(index, timeline);
+    try {
+        render2DStack(index, timeline);
+    } catch (e) {
+        console.error("StackVis2D Error:", e);
+    }
 
     // 2D Tree Update
-    treeVis.update(index, timeline);
+    try {
+        treeVis.update(index, timeline);
+    } catch (e) {
+        console.error("TreeVis Error:", e);
+    }
 
     // UI Overlay Update
     const msg = event.message || event.type;
