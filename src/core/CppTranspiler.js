@@ -36,7 +36,7 @@ class CppTranspiler {
             }).filter(x => x).join(', ');
 
             return `
-            async function ${funcName}(${cleanArgs}) {
+            function ${funcName}(${cleanArgs}) {
                 const _frameId = tracer.call('${funcName}', { ${cleanArgs} }, 0);
             `;
         });
