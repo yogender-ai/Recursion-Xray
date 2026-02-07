@@ -179,6 +179,14 @@ body {
     outline: none;
 }
 
+/* --- Central Vis (Holodeck) --- */
+.vis-container {
+    position: relative;
+    background: transparent;
+    /* Allow body starfield to show */
+    overflow: hidden;
+}
+
 /* --- Buttons --- */
 .cyber-btn {
     position: relative;
