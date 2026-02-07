@@ -12,6 +12,11 @@ class CppTranspiler {
     transpile(cppCode) {
         let jsCode = cppCode;
 
+        // 0. New: Remove Forward Declarations FIRST
+        // Pattern: Type Name(Args);
+        // regex: (void|int|bool|string|vector<...>) name (...);
+        jsCode = jsCode.replace(/(?:void|int|bool|string|vector\s*<.*?>)\s+\w+\s*\(.*?\);/g, '');
+
         // 1. Remove Headers (naive)
         jsCode = jsCode.replace(/#include\s+<.*?>/g, '');
         jsCode = jsCode.replace(/using\s+namespace\s+std;/g, '');
@@ -24,15 +29,6 @@ class CppTranspiler {
         });
 
         // 3. Handle Function Definitions
-        // We need to capture the function body and wrap it correctly.
-        // Regex to match C++ function signatures:
-        // ReturnType FunctionName ( Args ) { Body }
-
-        // This regex is tricky for nested braces. 
-        // Strategy: Iterate through the code, find function headers, then extract block.
-        // BUT for this simplified visualizer, we can assume standard formatting?
-        // Or better: Just replace the header and let the body be.
-
         // Match: void|int|bool|string|vector<...> name ( ... ) {
         const funcRegex = /(?:void|int|string|bool|vector\s*<.*?>)\s+(\w+)\s*\((.*?)\)\s*\{/g;
 
@@ -42,17 +38,9 @@ class CppTranspiler {
             let cleanArgs = argsList.map(arg => {
                 arg = arg.trim();
                 if (!arg) return '';
-                // "int n" -> "n"
-                // "vector<int> arr" -> "arr"
                 let parts = arg.split(/\s+|&/);
                 return parts[parts.length - 1]; // Last part is var name
             }).filter(x => x).join(', ');
-
-            // Inject Tracer Call at start of function
-            // We use 'async' to allow await if we ever need it (we don't for tracer, but maybe for main)
-            // But wait, our 'main' runs synchronously in the eval?
-            // Actually, we made main async in the wrapper.
-            // Let's keep these regular functions for linear execution speed.
 
             return `
             function ${funcName}(${cleanArgs}) {
@@ -72,38 +60,60 @@ class CppTranspiler {
         jsCode = jsCode.replace(/vector\s*<.*?>/g, 'let');
         jsCode = jsCode.replace(/\b(int|void|string|bool|double)\b/g, 'let');
 
-        // 6. Vector Methods
+        // 6. Vector/String Methods
         jsCode = jsCode.replace(/\.push_back\(/g, '.push(');
         jsCode = jsCode.replace(/\.pop_back\(/g, '.pop(');
         jsCode = jsCode.replace(/\.size\(\)/g, '.length');
+        jsCode = jsCode.replace(/\.length\(\)/g, '.length'); // Fix for string.length()
+        jsCode = jsCode.replace(/\.substr\(/g, '.substring('); // substr is deprecated, use substring
 
         // New: Handle Initialization Lists {1, 2, 3} -> [1, 2, 3]
-        // This is tricky because {} is also for blocks.
-        // We target assignments: = { ... }; or return { ... };
-        // Or in params: func({ ... })
         jsCode = jsCode.replace(/=\s*\{(.*?)\};/g, ' = [$1];');
         jsCode = jsCode.replace(/return\s*\{(.*?)\};/g, 'return [$1];');
-        // Handle params? func(arg, { ... }) -> func(arg, [ ... ])
-        // This regex is slightly dangerous but works for our simple cases:
         jsCode = jsCode.replace(/,\s*\{(.*?)\}/g, ', [$1]');
-        jsCode = jsCode.replace(/\(\{(.*?)\}/g, '([$1]'); // First arg
+        jsCode = jsCode.replace(/\(\{(.*?)\}/g, '([$1]');
 
-        // New: Remove Forward Declarations
-        // Pattern: Type Name(Args);
-        // regex: (void|int|bool|string|vector<...>) name (...);
-        jsCode = jsCode.replace(/(?:void|int|bool|string|vector\s*<.*?>)\s+\w+\s*\(.*?\);/g, '');
-
-        // 7. Line Stepper (Simple)
+        // 7. Line Stepper & Implicit Returns
         const lines = jsCode.split('\n');
-        const instrumentedLines = lines.map((line, idx) => {
+        const instrumentedLines = [];
+        let braceDepth = 0;
+
+        lines.forEach((line, idx) => {
             const trimmed = line.trim();
             const lineNum = idx + 1;
 
-            if (!trimmed || trimmed.startsWith('//')) return line;
-            if (trimmed === '}' || trimmed === '{') return line;
-            if (trimmed.startsWith('async function')) return line;
+            // Track braces to find end of function
+            // Simple heuristic since we don't have a parser
+            if (trimmed.includes('{')) braceDepth++;
+            if (trimmed.includes('}')) {
+                braceDepth--;
+                if (braceDepth === 0) {
+                    // Exiting function? Inject return if it was void
+                    // Safe to inject always, as unreachable code is fine in JS
+                    instrumentedLines.push(`tracer.return(undefined, 0);`);
+                }
+            }
 
-            return `tracer.registerLine(${lineNum}); ${line}`;
+            if (!trimmed || trimmed.startsWith('//')) {
+                instrumentedLines.push(line);
+                return;
+            }
+            if (trimmed === '}' || trimmed === '{') {
+                instrumentedLines.push(line);
+                return;
+            }
+            if (trimmed.startsWith('async function')) { // Don't instrument function header line again?
+                instrumentedLines.push(line);
+                return;
+            }
+
+            // Avoid instrumenting our injected code (starts with tracer)
+            if (trimmed.startsWith('function') || trimmed.startsWith('tracer.')) {
+                instrumentedLines.push(line);
+                return;
+            }
+
+            instrumentedLines.push(`tracer.registerLine(${lineNum}); ${line}`);
         });
 
         jsCode = instrumentedLines.join('\n');
