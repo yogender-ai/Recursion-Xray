@@ -349,7 +349,15 @@ elAlgoSelect.addEventListener('change', (e) => {
     elEditor.value = algo.code;
 
     // Update Inputs
-    elAlgoInput.value = algo.defaultInput;
+    if (algo.inputType === 'none') {
+        elAlgoInput.value = '';
+        elAlgoInput.placeholder = "Input ignored for custom code";
+        elAlgoInput.disabled = true;
+    } else {
+        elAlgoInput.value = algo.defaultInput;
+        elAlgoInput.placeholder = "Input (e.g. 1,2,3)";
+        elAlgoInput.disabled = false;
+    }
 
     // Educational Overlay
     elStepTitle.textContent = category.name.toUpperCase();
@@ -410,13 +418,20 @@ document.getElementById('btnRun').addEventListener('click', async () => {
     const driverSplit = rawCpp.split('// Driver');
     let finalCpp = rawCpp;
 
-    if (driverSplit.length > 1) {
-        // Re-generate driver from Input Box
-        finalCpp = driverSplit[0] + "\n// Driver\n" + driverCode;
-        console.log("Injected Driver Code:", driverCode);
+    if (catKey === 'custom') {
+        // For custom code, use the user's code EXACTLY as is.
+        // Do NOT inject driver code from inputs.
+        console.log("Custom code selected. Bypassing driver injection.");
+        finalCpp = rawCpp;
     } else {
-        // Append if not found
-        finalCpp = rawCpp + "\n\n// Driver\n" + driverCode;
+        if (driverSplit.length > 1) {
+            // Re-generate driver from Input Box
+            finalCpp = driverSplit[0] + "\n// Driver\n" + driverCode;
+            console.log("Injected Driver Code:", driverCode);
+        } else {
+            // Append if not found
+            finalCpp = rawCpp + "\n\n// Driver\n" + driverCode;
+        }
     }
 
     // UI Feedback

@@ -242,5 +242,29 @@ int n = 1;
 ackermann(m, n);`
             }
         }
+    },
+    // --- 7. CUSTOM USER CODE ---
+    "custom": {
+        name: "My Code",
+        description: "Write your own recursive function and driver code here. The visualizer will run exactly what you write.",
+        algorithms: {
+            "playground": {
+                name: "Playground",
+                defaultInput: "", // Input ignored for custom code
+                inputType: "none",
+                params: [],
+                rootFn: "solve", // Default name, user can change
+                code: `// Write your recursive function here
+void solve(int n) {
+    if (n <= 0) return;
+    cout << "Step: " << n;
+    solve(n - 1);
+}
+
+// Driver
+// Call your function here with any arguments
+solve(3);`
+            }
+        }
     }
 };
